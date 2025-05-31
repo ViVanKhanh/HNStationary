@@ -1,0 +1,215 @@
+﻿@model PagedList.PagedList<HNStationaryStore.Models.EF.Order>
+@using PagedList.Mvc;
+@using PagedList;
+@{
+    ViewBag.Title = "Danh mục đơn hàng";
+}
+
+<style>
+    body {
+        color: red;
+    }
+
+    p {
+        font-family: Roboto, sans-serif;
+        font-weight: 400;
+        font-style: normal;
+    }
+
+    table {
+        border: 1px solid black;
+        color: red;
+    }
+
+    th {
+        color: red;
+    }
+
+    td {
+        color: black;
+    }
+</style>
+<div class="container-fluid">
+    <div class="row mb-2">
+        <div class="col-sm-6">
+            <h3 style="color: #222; font-weight: 700;">@ViewBag.Title</h3>
+        </div>
+        <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+                <li class="breadcrumb-item"><a href="/admin/home">Home</a></li>
+                <li class="breadcrumb-item active">@ViewBag.Title</li>
+            </ol>
+        </div>
+    </div>
+
+    <section class="content">
+
+        <!-- Default box -->
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0" style="color: #222; font-weight: 700;">Danh sách đơn hàng</h5>
+            </div>
+            <div class="card-body">
+                <form class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my- my-md-0 mw-100 navbar-search">
+                    <div class="input-group">
+                        @using (Html.BeginForm("Index", "Order", FormMethod.Get, new { }))
+                        {
+                            @Html.TextBox("SearchText", Request["SearchText"], new { @class = "form-control", id = "searchInput", placeholder = "Tìm mã đơn hàng..." })
+                            <div class="input-group-append">
+                                <button class="btn btn-primary" type="submit">
+                                    <i class="fas fa-search fa-sm"></i>
+                                </button>
+                            </div>
+                        }
+                    </div>
+                </form>
+                <table class="table table-hover table-bordered text-center my-2">
+                    <thead class="text-dark">
+                        <tr>
+                            <th>STT</th>
+                            <th>Mã đơn hàng</th>
+                            <th>Tên khách hàng</th>
+                            <th>Số điện thoại</th>
+                            <th>Tổng tiền</th>
+                            <th>Thanh toán</th>
+                            <th>Trạng thái</th>
+                            <th>Ngày tạo</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model != null && Model.Any())
+                        {
+                            var i = (Model.PageNumber - 1) * Model.PageSize + 1;
+                            foreach (var item in Model)
+                            {
+
+                                <tr>
+                                    <td>@i</td>
+                                    <td>@item.Code</td>
+                                    <td>@item.Phone</td>
+                                    <td>@item.CustomerName</td>
+                                    <td>@item.TotalPrice.ToString("N0").Replace(",", ".")</td>
+                                    <td>@(item.TypePayment==1 ? "Tiền mặt" : "Chuyển khoản")</td>
+                                    <td>
+                                        @{
+                                            string statusText = "";
+                                            switch (item.OrderStatus)
+                                            {
+                                                case HNStationaryStore.Models.EF.OrderStatus.Success:
+                                                    statusText = "Đặt hàng thành công";
+                                                    break;
+                                                case HNStationaryStore.Models.EF.OrderStatus.Shipping:
+                                                    statusText = "Đang vận chuyển";
+                                                    break;
+                                                case HNStationaryStore.Models.EF.OrderStatus.Delivered:
+                                                    statusText = "Đã giao hàng";
+                                                    break;
+                                                case HNStationaryStore.Models.EF.OrderStatus.Cancelled:
+                                                    statusText = "Đã hủy";
+                                                    break;
+                                            }
+                                        }
+                                        @statusText
+                                    </td>
+                                    <td>@item.CreatedAt.ToString("dd/MM/yyyy")</td>
+                                    <td>
+                                        <a href="/admin/order/view/@item.OrderID" class="btn btn-sm btn-success">Xem</a>
+                                        <a href="#" class="btn btn-sm btn-danger btnCapNhat" data-id="@item.OrderID" data-toggle="modal" data-target="#modal-default">Cập nhật</a>
+
+                                    </td>
+                                </tr>
+                                i++;
+                            }
+
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="4" class="text-center">Không có bản ghi nào</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                @Html.PagedListPager(Model, page => Url.Action("Index", new { page }))
+            </div>
+            <!-- /.card-body -->
+            <div class="card-footer">
+
+            </div>
+            <!-- /.card-footer-->
+        </div>
+        <!-- /.card -->
+
+    </section>
+
+    <div class="modal fade" id="modal-default">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Cập nhật trạng thái</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="txtOrderId" value="0" />
+                    <div class="form-group">
+                        <label>Trạng thái</label>
+                        <select class="form-control" id="ddTrangThai">
+                            <option value="1">Đặt hàng thành công</option>
+                            <option value="2">Đang vận chuyển</option>
+                            <option value="3">Đã giao hàng</option>
+                            <option value="4">Đã hủy</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
+                    <button type="button" class="btn btn-primary" id="btnLuu">Lưu</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div><!-- /.container-fluid -->
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            // Mở modal khi nhấn nút "Cập nhật"
+            $('body').on('click', '.btnCapNhat', function () {
+                var id = $(this).data("id");  // Lấy ID đơn hàng
+                $('#txtOrderId').val(id);  // Đặt ID vào hidden input
+                $('#modal-default').modal('show');  // Mở modal
+            });
+
+            // Lưu trạng thái khi nhấn nút "Lưu"
+            $('body').on('click', '#btnLuu', function () {
+                var orderId = $('#txtOrderId').val();  // Lấy ID đơn hàng
+                var status = $('#ddTrangThai').val();  // Lấy trạng thái mới từ dropdown
+
+                $.ajax({
+                    url: '/admin/order/updateStatus',  // URL gửi yêu cầu cập nhật trạng thái
+                    type: 'POST',
+                    data: {
+                        id: orderId,
+                        status: status
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                            location.reload();  // Reload lại trang nếu cập nhật thành công
+                        } else {
+                            alert(response.message || 'Cập nhật thất bại');
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("Có lỗi xảy ra: ", error);
+                        alert('Lỗi kết nối với máy chủ');
+                    }
+                });
+            });
+        });
+
+    </script>
+}

@@ -1,0 +1,149 @@
+﻿@model IEnumerable<HNStationaryStore.Models.CustomDateReportViewModel>
+@{
+    ViewBag.Title = "Báo cáo doanh thu tùy chỉnh";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid">
+    <a class="btn btn-success mb-3" href="/Admin/Statistical">Quay lại</a>
+    <h1 class="h3 mb-2 text-gray-800">Báo cáo doanh thu từ ngày @ViewBag.FromDate.ToString("dd/MM/yyyy") đến ngày @ViewBag.ToDate.ToString("dd/MM/yyyy")</h1>
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <div class="row">
+
+                <div class="col-md-6">
+                    <h6 class="m-0 font-weight-bold text-primary">Doanh thu theo ngày</h6>
+                </div>
+                <div class="col-md-6 text-right">
+                    @using (Html.BeginForm("CustomDateReport", "Statistical", new { area = "Admin" }, FormMethod.Get, new { @class = "form-inline" }))
+                    {
+                        <div class="form-group mr-2">
+                            <label for="fromDate" class="mr-2">Từ ngày:</label>
+                            <input type="date" id="fromDate" name="fromDate"
+                                   value="@ViewBag.FromDate.ToString("yyyy-MM-dd")"
+                                   class="form-control" required>
+                        </div>
+
+                        <div class="form-group mr-2">
+                            <label for="toDate" class="mr-2">Đến ngày:</label>
+                            <input type="date" id="toDate" name="toDate"
+                                   value="@ViewBag.ToDate.ToString("yyyy-MM-dd")"
+                                   class="form-control" required>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-filter"></i> Lọc
+                        </button>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="chart-area">
+                <canvas id="dailyRevenueChart" height="300"></canvas>
+            </div>
+            <hr>
+            <div class="table-responsive">
+                <table class="table table-bordered" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Ngày</th>
+                            <th>Số đơn hàng</th>
+                            <th>Doanh thu</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@(item.Date.ToString("dd/MM/yyyy"))</td>
+                                <td>@item.OrderCount</td>
+                                <td>@string.Format("{0:N0}", item.TotalRevenue) đ</td>
+                            </tr>
+                        }
+                    </tbody>
+                    <tfoot>
+                        <tr class="font-weight-bold">
+                            <td>Tổng cộng</td>
+                            <td>@Model.Sum(x => x.OrderCount)</td>
+                            <td>@string.Format("{0:N0}", Model.Sum(x => x.TotalRevenue)) đ</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script>
+        $(document).ready(function () {
+            // Validate date range
+            $('form').submit(function (e) {
+                var fromDate = new Date($('#fromDate').val());
+                var toDate = new Date($('#toDate').val());
+
+                if (fromDate > toDate) {
+                    alert('Ngày bắt đầu phải nhỏ hơn hoặc bằng ngày kết thúc');
+                    e.preventDefault();
+                    return false;
+                }
+
+                // Giới hạn tối đa 3 tháng
+                var diffMonths = (toDate.getFullYear() - fromDate.getFullYear()) * 12
+                    + (toDate.getMonth() - fromDate.getMonth());
+
+                if (diffMonths > 3) {
+                    if (!confirm('Khoảng thời gian lớn hơn 3 tháng có thể ảnh hưởng hiệu năng. Tiếp tục?')) {
+                        e.preventDefault();
+                        return false;
+                    }
+                }
+                return true;
+            });
+        });
+
+
+
+        // Daily Revenue Chart
+        var ctx = document.getElementById('dailyRevenueChart');
+        var dailyRevenueChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [@Html.Raw(string.Join(",", Model.OrderBy(x => x.Date).Select(x => "'" + x.Date.ToString("dd/MM") + "'")))],
+                datasets: [{
+                    label: 'Doanh thu',
+                    data: [@string.Join(",", Model.OrderBy(x => x.Date).Select(x => x.TotalRevenue))],
+                    backgroundColor: 'rgba(28, 200, 138, 0.1)',
+                    borderColor: 'rgba(28, 200, 138, 1)',
+                    pointBackgroundColor: 'rgba(28, 200, 138, 1)',
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: 'rgba(28, 200, 138, 1)',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                maintainAspectRatio: false,
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true,
+                            callback: function(value, index, values) {
+                                return value.toLocaleString() + ' đ';
+                            }
+                        }
+                    }]
+                },
+                tooltips: {
+                    callbacks: {
+                        label: function(tooltipItem, data) {
+                            return tooltipItem.yLabel.toLocaleString() + ' đ';
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+}

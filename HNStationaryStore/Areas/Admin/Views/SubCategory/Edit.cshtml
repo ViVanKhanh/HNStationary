@@ -1,0 +1,49 @@
+﻿@model HNStationaryStore.Models.EF.SubCategory
+@{
+    ViewBag.Title = "Sửa danh mục con";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row mb-2">
+    <div class="col-sm-6">
+        <h3 class="fw-bold text-dark">Sửa danh mục con</h3>
+    </div>
+    <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href="/admin/home">Home</a></li>
+            <li class="breadcrumb-item"><a href="/admin/SubCategory">Danh mục con</a></li>
+            <li class="breadcrumb-item active">Sửa</li>
+        </ol>
+    </div>
+</div>
+
+<section class="content">
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="card-title fw-bold text-dark mb-0">Thông tin chỉnh sửa danh mục con</h5>
+        </div>
+        <div class="card-body">
+            @using (Html.BeginForm("Edit", "SubCategory", FormMethod.Post, new { }))
+            {
+                @Html.AntiForgeryToken()
+                @Html.ValidationSummary(false)
+                @Html.HiddenFor(x => x.SubCategoryID)
+
+                <div class="form-group">
+                    <label for="SubCategoryName" style="color: #222; font-weight: 700;">Tên danh mục con</label>
+                    @Html.TextBoxFor(x => x.SubCategoryName, new { @class = "form-control", @placeholder = "Tên danh mục con" })
+                    @Html.ValidationMessageFor(x => x.SubCategoryName, null, new { @class = "text-danger" })
+                </div>
+
+                <div class="form-group">
+                    <label for="CategoryID" style="color: #222; font-weight: 700;">Mã danh mục</label>
+                    @Html.DropDownListFor(x => x.CategoryID, ViewBag.CategoryList as SelectList, "- Chọn danh mục -", new { @class = "form-control" })
+                    @Html.ValidationMessageFor(x => x.CategoryID, null, new { @class = "text-danger" })
+                </div>
+
+                <a href="/admin/SubCategory" class="btn btn-danger">Quay lại</a>
+                <button type="submit" class="btn btn-primary">Cập nhật</button>
+            }
+        </div>
+    </div>
+</section>

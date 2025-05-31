@@ -1,0 +1,72 @@
+﻿@using HNStationaryStore.Models
+@model LoginViewModel
+@{
+    ViewBag.Title = "Log in";
+}
+
+<link rel="stylesheet" type="text/css" href="~/Content/assets/styles/contact_styles.css">
+<link rel="stylesheet" type="text/css" href="~/Content/assets/styles/contact_responsive.css">
+<<div class="container contact_container">
+    <main aria-labelledby="title">
+        <h2 id="title" class="text-danger">Văn phòng phẩm HNStationary.</h2>
+        <div class="row">
+            <div class="col-md-8">
+                <section id="loginForm">
+                    @using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { role = "form" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        <h4 class="text-danger">Đăng nhập</h4>
+                        <hr />
+                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                        <div class="row">
+                            @Html.LabelFor(m => m.UserName, "Tên đăng nhập", new { @class = "col-md-2 my-2 col-form-label" })
+                            <div class="col-md-10">
+                                @Html.TextBoxFor(m => m.UserName, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(m => m.UserName, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="row">
+                            @Html.LabelFor(m => m.Password, "Mật khẩu", new { @class = "col-md-2 col-form-label" })
+                            <div class="col-md-10">
+                                @Html.PasswordFor(m => m.Password, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="offset-md-2 col-md-10">
+                                <div class="checkbox">
+                                    @Html.CheckBoxFor(m => m.RememberMe)
+                                    @Html.LabelFor(m => m.RememberMe, "Ghi nhớ đăng nhập")
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="offset-md-2 col-md-10">
+                                <input type="submit" value="Đăng nhập" class="btn btn-outline-dark" />
+                            </div>
+                        </div>
+                        <p>
+                            @Html.ActionLink("Đăng ký tài khoản mới", "Register")
+                        </p>
+                        @* Kích hoạt phần này nếu bạn có chức năng xác nhận tài khoản để đặt lại mật khẩu
+                <p>
+                    @Html.ActionLink("Quên mật khẩu?", "ForgotPassword")
+                </p>*@
+                    }
+                </section>
+
+            </div>
+            <div class="col-md-4">
+                @*<h4>Chào mừng bạn đến với HNStationary </h4>*@
+                @*<p class="text-danger">
+                    "Nơi mang đến cho bạn một trải nghiệm mua sắm văn phòng phẩm đơn giản và hiệu quả Với đa dạng sản phẩm từ các danh mục như bút viết, giấy in, dụng cụ học tập và nhiều hơn thế nữa, chúng tôi cam kết cung cấp những sản phẩm chất lượng, dịch vụ chuyên nghiệp và sự hài lòng cao nhất từ khách hàng. .
+                </p>*@
+                @*<img src="~/Content/assets/images/van-phong-pham-247.jpg"/>*@
+            </div>
+        </div>
+    </main>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

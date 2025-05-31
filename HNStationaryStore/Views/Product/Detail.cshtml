@@ -1,0 +1,359 @@
+﻿    @model HNStationaryStore.Models.EF.Product
+    @{
+        ViewBag.Title = Model.ProductName;
+        Layout = "~/Views/Shared/_Layout.cshtml";
+    }
+    <link rel="stylesheet" type="text/css" href="~/Content/assets/styles/single_styles.css">
+    <link rel="stylesheet" type="text/css" href="~/Content/assets/styles/single_responsive.css">
+    <style>
+        .single_product_thumbnails {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+            .single_product_thumbnails ul {
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+                padding: 0;
+                margin: 0;
+            }
+
+            .single_product_thumbnails li {
+                list-style: none;
+                width: 100%;
+                aspect-ratio: 1/1; /* Tạo ô vuông đều */
+                cursor: pointer;
+                border: 1px solid #eee;
+                background: #fff;
+                overflow: hidden;
+                position: relative;
+            }
+
+                .single_product_thumbnails li img {
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover; /* Che phủ toàn bộ và không bị méo */
+                    transition: transform 0.3s ease;
+                }
+
+                .single_product_thumbnails li:hover img {
+                    transform: scale(1.05);
+                }
+
+        .single_product_image_background {
+            background-size: cover !important;
+            background-repeat: no-repeat;
+            background-position: center center;
+            height: 500px;
+        }
+
+        .box-section {
+            border: 1px solid rgba(0, 0, 0, 0.1); /* Viền mờ */
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            background-color: #fff;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .tab_title h4 {
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+            margin-bottom: 15px;
+        }
+        /* Rating stars */
+        .star-rating {
+            display: flex;
+            flex-direction: row-reverse;
+            justify-content: flex-end;
+            font-size: 1.5em;
+        }
+
+            .star-rating input {
+                display: none;
+            }
+
+            .star-rating label {
+                color: #ddd;
+                cursor: pointer;
+                padding: 0 3px;
+            }
+
+                .star-rating input:checked ~ label,
+                .star-rating label:hover,
+                .star-rating label:hover ~ label {
+                    color: #ffc107;
+                }
+
+            .star-rating input:checked + label {
+                color: #ffc107;
+            }
+
+        .review-item {
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+        }
+
+        .review-header {
+            align-items: center;
+        }
+
+        .reviewer-name {
+            font-weight: 600;
+        }
+
+        .review-date {
+            font-size: 0.9em;
+        }
+
+        .review-rating {
+            color: #ffc107;
+        }
+
+        .review-content p {
+            margin-bottom: 0;
+        }
+    </style>
+
+    <div>
+        @if (Model != null)
+        {
+            <div class="container single_product_container">
+
+                <!-- Product Detail Section (10 columns) -->
+                <div>
+                    <!-- Breadcrumbs -->
+                    <div class="breadcrumbs d-flex flex-row align-items-center mb-3">
+                        <ul>
+                            <li><a href="/">Trang chủ</a></li>
+                            <li><a href="/san-pham"><i class="fa fa-angle-right" aria-hidden="true"></i> Sản phẩm</a></li>
+                            <li class="active"><a href="#"><i class="fa fa-angle-right" aria-hidden="true"></i> @Model.SubCategory.SubCategoryName</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-lg-7">
+                            <div class="single_product_pics">
+                                <div class="row">
+                                    <div class="col-lg-3 thumbnails_col order-lg-1 order-2">
+                                        <div class="single_product_thumbnails">
+                                            <ul>
+                                                @if (Model.ProductImages != null && Model.ProductImages.Any())
+                                                {
+                                                    foreach (var image in Model.ProductImages)
+                                                    {
+                                                        <li><img src="@image.ImageURL" alt="@Model.ProductName" data-image="@image.ImageURL"></li>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <li><img src="~/Content/assets/images/default_product.jpg" alt="@Model.ProductName" data-image="~/Content/assets/images/default_product.jpg"></li>
+                                                }
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-9 image_col order-lg-2 order-1">
+                                        <div class="single_product_image">
+                                            <div class="single_product_image_background"
+                                                 style="background-image:url(@(Model.ProductImages != null && Model.ProductImages.Any() ? Model.ProductImages.First().ImageURL : "~/Content/assets/images/default_product.jpg"))">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-5">
+                            <div class="product_details">
+                                <div class="product_details_title">
+                                    <h2>@Model.ProductName</h2>
+                                    <h5>Nhà SX: <span class="text-danger">@Model.Manufacturer</span></h5>
+                                </div>
+                                @if (Model.IsOnSale)
+                                {
+                                    <div class="free_delivery d-flex flex-row align-items-center justify-content-center">
+                                        <span class="ti-tag"></span><span>Đang giảm giá @Model.DiscountPercentage%</span>
+                                    </div>
+                                    <div class="original_price">@String.Format("{0:N0}", Model.SalePrice) đ</div>
+                                    <div class="product_price">@String.Format("{0:N0}", Model.DiscountedPrice) đ</div>
+                                }
+                                else
+                                {
+                                    <div class="product_price">@String.Format("{0:N0}", Model.SalePrice) đ</div>
+                                }
+                                @*<ul class="star_rating">
+                                    <li><i class="fa fa-star" aria-hidden="true"></i></li>
+                                    <li><i class="fa fa-star" aria-hidden="true"></i></li>
+                                    <li><i class="fa fa-star" aria-hidden="true"></i></li>
+                                    <li><i class="fa fa-star" aria-hidden="true"></i></li>
+                                    <li><i class="fa fa-star-o" aria-hidden="true"></i></li>
+                                </ul>*@
+                                <div class="quantity d-flex flex-column flex-sm-row align-items-sm-center">
+                                    <span>Số lượng:</span>
+                                    <div class="quantity_selector">
+                                        <span class="minus"><i class="fa fa-minus" aria-hidden="true"></i></span>
+                                        <span id="quantity_value">1</span>
+                                        <span class="plus"><i class="fa fa-plus" aria-hidden="true"></i></span>
+                                    </div>
+                                </div>
+                                <div class="my-3">
+                                    <a href="#" class="btn btn-danger btnAddToCard" data-id="@Model.ProductID">Thêm vào giỏ hàng</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Mô tả và đánh giá -->
+                    <div class="tabs_section_container mt-1">
+                        <div class="row">
+                            <div class="col-lg-12 desc_col">
+                                <div class="tab_title">
+                                    <h4>Mô tả sản phẩm</h4>
+                                </div>
+                                <div class="tab_text_block">
+                                    @Html.Raw(Model.Description)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Đánh giá -->
+                    <div class="row mt-4">
+                        <div class="col-lg-12">
+                            @Html.Partial("_ProductReviews", Model)
+                        </div>
+                    </div>
+                    <div class="container-fluid">
+                        <!-- Dùng container-fluid thay vì container -->
+                        <div class="row">
+                            <div class="col-12">
+                                <!-- Dùng col-12 thay vì col-lg-12 -->
+                                @Html.Partial("_ReviewForm", new HNStationaryStore.Models.EF.ProductReview { ProductID = Model.ProductID })
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Form thêm đánh giá -->
+                   
+                </div>
+        
+                <div class="product_slider_container">
+                    <div class="row my-3">
+                        <div class="col-5 bg-danger">
+                            <h4 class="text-white text-center my-2">Sản phẩm khuyến mại</h4>
+                        </div>
+                        <div class="col-9">
+
+                        </div>
+                    </div>
+                    <div class="owl-carousel owl-theme product_slider">
+                        @Html.Action("Partial_ItemSale", "Product")
+                        <!-- Slider Navigation -->
+                        <div class="product_slider_nav_left product_slider_nav d-flex align-items-center justify-content-center flex-column">
+                            <i class="fa fa-chevron-left" aria-hidden="true"></i>
+                        </div>
+
+                        <div class="product_slider_nav_right product_slider_nav d-flex align-items-center justify-content-center flex-column">
+                            <i class="fa fa-chevron-right" aria-hidden="true"></i>
+                        </div>
+                    </div>
+                </div>
+            </div> <!-- End .container -->
+
+        }
+        else
+        {
+            <div class="container">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="alert alert-warning">
+                            Sản phẩm không tồn tại hoặc đã bị xóa
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    
+    </div>
+    @section scripts {
+        <script src="~/Content/assets/js/single_custom.js"></script>
+        <script>
+            $(document).ready(function () {
+                // Quantity controls
+                $('.plus').off('click').on('click', function () {
+                    var value = parseInt($('#quantity_value').text().trim(), 10);
+                    if (value < /* Số lượng giới hạn */) {
+                        $('#quantity_value').text(value + 1);
+                    } else {
+                        alert('Số lượng sản phẩm đã vượt quá giới hạn cho phép.');
+                        // Hoặc bạn có thể hiển thị thông báo khác hoặc xử lý theo ý của bạn
+                    }
+                });
+
+                $('.minus').off('click').on('click', function () {
+                    var value = parseInt($('#quantity_value').text().trim(), 10);
+                    if (value > 1) {
+                        $('#quantity_value').text(value - 1);
+                    }
+                });
+
+                // Image thumbnail click
+                $('.single_product_thumbnails ul li').off('click').on('click', function () {
+                    var imageUrl = $(this).find('img').data('image');
+                    $('.single_product_image_background').css('background-image', 'url(' + imageUrl + ')');
+                    $('.single_product_thumbnails ul li').removeClass('active');
+                    $(this).addClass('active');
+                });
+            });
+
+            // Xử lý rating stars
+            $('.star-rating label').click(function () {
+                // Xóa tất cả các sao trước đó
+                $(this).parent().find('label').css('color', '#ddd');
+
+                // Đánh dấu sao được chọn và các sao trước đó
+                $(this).css('color', '#ffc107').prevAll('label').css('color', '#ffc107');
+
+                // Cập nhật giá trị rating
+                var rating = $(this).attr('for').split('-')[1];
+                $('input[name="Rating"]').val(rating);
+            });
+
+            // Xử lý submit form đánh giá
+            $('#review_form').submit(function (e) {
+                e.preventDefault();
+
+                // Kiểm tra các trường bắt buộc
+                var isValid = true;
+                $(this).find('[required]').each(function () {
+                    if ($(this).val() === '') {
+                        $(this).addClass('is-invalid');
+                        isValid = false;
+                    } else {
+                        $(this).removeClass('is-invalid');
+                    }
+                });
+
+                if (isValid) {
+                    $.ajax({
+                        url: $(this).attr('action'),
+                        type: 'POST',
+                        data: $(this).serialize(),
+                        success: function (response) {
+                            // Reload trang để hiển thị đánh giá mới
+                            location.reload();
+                        },
+                        error: function () {
+                            alert('Có lỗi xảy ra khi gửi đánh giá. Vui lòng thử lại.');
+                        }
+                    });
+                }
+            });
+
+        </script>
+    }

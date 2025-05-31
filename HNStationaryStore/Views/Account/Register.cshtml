@@ -1,0 +1,86 @@
+﻿@model HNStationaryStore.Models.RegisterViewModel
+@{
+    ViewBag.Title = "Đăng kí";
+}
+
+<link rel="stylesheet" type="text/css" href="~/Content/assets/styles/contact_styles.css" />
+<link rel="stylesheet" type="text/css" href="~/Content/assets/styles/contact_responsive.css" />
+<style>
+    label, h1, h4 {
+        color: red;
+    }
+</style>
+
+<div class="container contact_container">
+    <main aria-labelledby="title">
+        <h1 id="title">@ViewBag.Title.</h1>
+
+        @if (ViewBag.SuccessMessage != null)
+        {
+            <div class="alert alert-success">
+                <strong>@ViewBag.SuccessMessage</strong><br />
+                <a href="@Url.Action("Login", "Account")" class="btn btn-success mt-2">Đăng nhập</a>
+            </div>
+        }
+
+        @using (Html.BeginForm("Register", "Account", FormMethod.Post, new { role = "form" }))
+        {
+            @Html.AntiForgeryToken()
+            <h4>Tạo tài khoản.</h4>
+            <hr />
+            @Html.ValidationSummary("", new { @class = "text-danger" })
+
+            <div class="row mb-3">
+                @Html.Label("UserName", "Tên tài khoản", new { @class = "col-md-2 col-form-label" })
+                <div class="col-md-10">
+                    @Html.TextBoxFor(m => m.UserName, new { @class = "form-control" })
+                </div>
+            </div>
+            <div class="row mb-3">
+                @Html.Label("FullName", "Họ và tên", new { @class = "col-md-2 col-form-label" })
+                <div class="col-md-10">
+                    @Html.TextBoxFor(m => m.FullName, new { @class = "form-control" })
+                </div>
+            </div>
+            <div class="row mb-3">
+                @Html.Label("Phone", "Số điện thoại", new { @class = "col-md-2 col-form-label" })
+                <div class="col-md-10">
+                    @Html.TextBoxFor(m => m.Phone, new { @class = "form-control" })
+                </div>
+            </div>
+            <div class="row mb-3">
+                @Html.Label("Address", "Địa chỉ", new { @class = "col-md-2 col-form-label" })
+                <div class="col-md-10">
+                    @Html.TextBoxFor(m => m.Address, new { @class = "form-control" })
+                </div>
+            </div>
+            <div class="row mb-3">
+                @Html.LabelFor(m => m.Email, new { @class = "col-md-2 col-form-label" })
+                <div class="col-md-10">
+                    @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
+                </div>
+            </div>
+            <div class="row mb-3">
+                @Html.Label("Password", "Mật khẩu", new { @class = "col-md-2 col-form-label" })
+                <div class="col-md-10">
+                    @Html.PasswordFor(m => m.Password, new { @class = "form-control" })
+                </div>
+            </div>
+            <div class="row mb-3">
+                @Html.LabelFor(m => m.ConfirmPassword, new { @class = "col-md-2 col-form-label" })
+                <div class="col-md-10">
+                    @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control" })
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="offset-md-2 col-md-10">
+                    <input type="submit" value="Đăng ký" class="btn btn-outline-dark" />
+                </div>
+            </div>
+        }
+    </main>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

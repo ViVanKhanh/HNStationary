@@ -1,0 +1,137 @@
+﻿@model HNStationaryStore.Models.EF.Order
+@{
+    ViewBag.Title = "Chi tiết đơn hàng";
+}
+
+<style>
+    body{
+        color: red;
+    }
+    p {
+        font-family: Roboto, sans-serif;
+        font-weight: 400;
+        font-style: normal;
+    }
+    table {
+        border: 1px solid black;
+        color: red;
+    }
+    th{
+        color: red;
+    }
+    td{
+        color: black;
+    }
+</style>
+
+<div class="container-fluid">
+    <div class="row mb-2">
+        <div class="col-sm-6">
+            <h3 style="color: #222; font-weight: 700;">@ViewBag.Title</h3>
+        </div>
+        <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+                <li class="breadcrumb-item"><a href="/admin/home">Home</a></li>
+                <li class="breadcrumb-item"><a href="/admin/order/index">Đơn hàng</a></li>
+                <li class="breadcrumb-item active">@ViewBag.Title</li>
+            </ol>
+        </div>
+    </div>
+
+    <section class="content">
+
+        <!-- Default box -->
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0" style="color: #222; font-weight: 700;">Chi tiết đơn hàng</h5>
+               
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-5">
+                        <div class="form-group p-2 table-bordered" style="border: 1px solid black; background-color: azure">
+                            <label style="color: #222; font-weight: 700;">Mã đơn hàng</label>
+                            <p class="form-control">@Model.Code</p>
+                            <label style="color: #222; font-weight: 700;">Tên khách hàng</label>
+                            <p class="form-control">@Model.CustomerName</p>
+                            <label style="color: #222; font-weight: 700;">Số điện thoại</label>
+                            <p class="form-control">@Model.Phone</p>
+                            <label style="color: #222; font-weight: 700;">Địa chỉ</label>
+                            <p class="form-control">@Model.Address</p>
+                            <label style="color: #222; font-weight: 700;">Email</label>
+                            <p class="form-control">@Model.Email</p>
+                            <label style="color: #222; font-weight: 700;">Tổng tiền</label>
+                            <p class="form-control">@Model.TotalPrice.ToString("N0").Replace(",", ".") đ</p>
+                            <label style="color: #222; font-weight: 700;">PT Thanh Toán</label>
+                            <p class="form-control">@(Model.TypePayment==1 ? "Tiền mặt" : "Chuyển khoản")</p>
+                            <label style="color: #222; font-weight: 700;">Trạng Thái</label>
+                            <p class="form-control">
+                                @{
+                                    string statusText = "";
+                                    switch (Model.OrderStatus)
+                                    {
+                                        case HNStationaryStore.Models.EF.OrderStatus.Success:
+                                            statusText = "Đặt hàng thành công";
+                                            break;
+                                        case HNStationaryStore.Models.EF.OrderStatus.Shipping:
+                                            statusText = "Đang vận chuyển";
+                                            break;
+                                        case HNStationaryStore.Models.EF.OrderStatus.Delivered:
+                                            statusText = "Đã giao hàng";
+                                            break;
+                                        case HNStationaryStore.Models.EF.OrderStatus.Cancelled:
+                                            statusText = "Đã hủy";
+                                            break;
+                                    }
+                                }
+                                @statusText
+                            </p>
+                            <label style="color: #222; font-weight: 700;">Thời gian đặt hàng</label>
+                            <p class="form-control">@Model.CreatedAt</p>
+                        </div>
+                    </div>
+                    <div class="col-md-7 " style="border: 1px solid black; background-color: azure">
+                        <h4 class="p-3">Danh sách sản phẩm</h4>
+                        <table class="table table-hover table-bordered  text-center my-2">
+                            <thead class="text-dark">
+                                <tr>
+                                    <th>Tên sản phẩm</th>
+                                    <th>Giá</th>
+                                    <th>Số lượng</th>
+                                    <th>Thành tiền</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.OrderDetails)
+                                {
+                                    <tr>
+                                        <td>@item.Product.ProductName</td>
+                                        <td>@item.UnitPrice.ToString("N0").Replace(",", ".") đ</td>
+                                        <td>@(item.Quantity)</td>
+                                        <td>@((item.UnitPrice * item.Quantity).ToString("N0").Replace(",", ".")) đ</td>
+
+                                    </tr>
+                                }
+
+                                <tr>
+                                    <td colspan="4" class="text-right font-weight-bold" style="color: #222; font-weight: 700;">
+                                    Tổng tiền: @Model.TotalPrice.ToString("N0").Replace(",", ".") đ
+                                    </td>
+
+                                </tr>
+                            </tbody>
+
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <!-- /.card-body -->
+            <div class="card-footer">
+
+            </div>
+            <!-- /.card-footer-->
+        </div>
+        <!-- /.card -->
+
+    </section>
+</div><!-- /.container-fluid -->

@@ -1,0 +1,103 @@
+﻿@model IEnumerable<HNStationaryStore.Models.ShoppingCardItem>
+@{
+    var isLoggedIn = ViewBag.IsLoggedIn != null && (bool)ViewBag.IsLoggedIn;
+}
+
+
+<table class="table table-hover text-center">
+    <thead>
+        <tr>
+            <th>STT</th>
+            <th>Ảnh sản phẩm</th>
+            <th>Tên sản phẩm</th>
+            <th>Danh mục</th>
+            <th>Giá</th>
+            <th style="width: 100px">Số lượng</th>
+            <th>Thành tiền</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null && Model.Any())
+        {
+            var i = 0;
+            var tongtien = decimal.Zero;
+            foreach (var item in Model)
+            {
+                tongtien += item.TotalPrice;
+                <tr id="trow_@item.ProductId">
+                    <td>@(i + 1)</td>
+                    <td><img src="@item.ProductImg" width="100" height="100" /></td>
+                    <td>
+                        <a href="/chi-tiet/@item.Alias-p@(item.ProductId)">@item.ProductName</a>
+                    </td>
+                    <td>@item.ProductCategory</td>
+                    <td>@item.Price.ToString("N0").Replace(",", ".") VND</td>
+                    <td>
+                        <input type="number" class="form-control" id="Quantity_@item.ProductId" value="@item.Quantity" />
+                    </td>
+                    <td>@item.TotalPrice.ToString("N0").Replace(",", ".") VND</td>
+                    <td>
+                        <a href="#" data-id="@item.ProductId" class="btn btn-sm btn-danger btnDelete">Xóa</a>
+                        <a href="#" data-id="@item.ProductId" class="btn btn-sm btn-success btnUpdate">Cập nhật</a>
+                    </td>
+                </tr>
+                i++;
+            }
+
+            <tr>
+                <th colspan="6" class="text-right">Tổng: </th>
+                <th class="text-center">@tongtien.ToString("N0").Replace(",", ".") VND</th>
+                <th></th>
+            </tr>
+            <tr>
+                <td colspan="8">
+                    <a href="/ShoppingCard/ClearAll" class="btn btn-danger mr-2 btnDeleteAll">Xóa tất cả</a>
+                    <a href="javascript:void(0);" id="btnCheckOut" class="btn btn-primary">Thanh toán</a>
+                </td>
+            </tr>
+        }
+        else
+        {
+            <tr>
+                <td colspan="8">Không có sản phẩm nào trong giỏ hàng</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<script>
+    $(document).ready(function () {
+        var isLoggedIn = @(isLoggedIn.ToString().ToLower());
+
+        $('#btnCheckOut').click(function (e) {
+            if (isLoggedIn === 'false') {
+                alert("Vui lòng đăng nhập để tiến hành thanh toán!");
+                window.location.href = '/Account/Login?returnUrl=/thanh-toan';
+            } else {
+                window.location.href = '/thanh-toan';
+            }
+        });
+
+        $('.btnUpdate').click(function (e) {
+            e.preventDefault();
+            var id = $(this).data("id");
+            var quantity = $('#Quantity_' + id).val();
+
+            $.ajax({
+                url: '/ShoppingCard/Update',
+                type: 'POST',
+                data: { id: id, quantity: quantity },
+                success: function (res) {
+                    if (res.Success) {
+                        alert('Cập nhật giỏ hàng thành công!');
+                        location.reload();
+                    } else {
+                        alert(res.Message);
+                        $('#Quantity_' + id).val(res.OriginalQuantity);
+                    }
+                }
+            });
+        });
+    });
+</script>

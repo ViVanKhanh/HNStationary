@@ -1,0 +1,115 @@
+﻿@model IEnumerable<HNStationaryStore.Models.EF.Product>
+@{
+    ViewBag.Title = "Tìm kiếm";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link rel="stylesheet" type="text/css" href="~/Content/assets/styles/categories_styles.css" />
+<link rel="stylesheet" type="text/css" href="~/Content/assets/styles/categories_responsive.css" />
+
+<div class="container product_section_container">
+    <div class="row">
+        <div class="col product_section clearfix">
+
+            <!-- Breadcrumbs -->
+            <div class="breadcrumbs d-flex flex-row align-items-center">
+                <ul>
+                    <li><a href="/">Trang chủ</a></li>
+                    <li class="active"><a><i class="fa fa-angle-right" aria-hidden="true"></i> Tìm kiếm</a></li>
+                </ul>
+            </div>
+
+            <div class="main_content">
+                <h2 class="category-title">Kết quả tìm kiếm cho: "@ViewBag.TuKhoa"</h2>
+
+                <div class="product-grid">
+                    @if (Model != null && Model.Any())
+                    {
+                        foreach (var item in Model)
+                        {
+                            var categoryClass = "category-" + item.ProductCategory.CategoryId;
+                            <div class="product-item @categoryClass">
+                                <div class="product discount product_filter">
+                                    <div class="product_image">
+                                        @if (item.ProductImages != null && item.ProductImages.Any())
+                                        {
+                                            var firstImage = item.ProductImages.FirstOrDefault();
+                                            <img src="@firstImage.ImageURL" alt="@item.ProductName" />
+                                        }
+                                        else
+                                        {
+                                            <img src="~/Content/images/default-product-image.jpg" alt="@item.ProductName" />
+                                        }
+                                    </div>
+                                    <div class="favorite favorite_left"></div>
+                                    @if (item.IsOnSale)
+                                    {
+                                        <div class="product_bubble product_bubble_right product_bubble_red d-flex flex-column align-items-center">
+                                            <span>-@item.DiscountPercentage%</span>
+                                        </div>
+                                    }
+                                    <div class="product_info">
+                                        <h6 class="product_name">
+                                            <a href="/chi-tiet/@item.Alias-p@(item.ProductID)">@item.ProductName</a>
+                                        </h6>
+                                        @if (item.IsOnSale)
+                                        {
+                                            <div class="product_price">
+                                                @item.DiscountedPrice.ToString("N0").Replace(",", ".") VND
+                                                <span>@item.SalePrice.ToString("N0").Replace(",", ".") VND</span>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <div class="product_price">@item.SalePrice.ToString("N0").Replace(",", ".") VND</div>
+                                        }
+                                    </div>
+                                </div>
+                                <div class="red_button add_to_cart_button">
+                                    <a href="#" class="btnAddToCard" data-id="@item.ProductID">Thêm vào giỏ</a>
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <p>Không tìm thấy sản phẩm phù hợp với từ khóa "@ViewBag.Query".</p>
+                    }
+                </div>
+
+                <!-- Pagination -->
+                <div class="product_sorting_container product_sorting_container_bottom clearfix">
+                    <div class="pages d-flex flex-row align-items-center">
+                        <div class="page_current">
+                            <span>@ViewBag.CurrentPage</span>
+                            <ul class="page_selection">
+                                @for (int i = 1; i <= ViewBag.TotalPages; i++)
+                                {
+                                    <li>
+                                        <a href="@Url.Action("TimKiem", new { query = ViewBag.Query, page = i, pageSize = ViewBag.PageSize })">
+                                            @i
+                                        </a>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                        <div class="page_total"><span>trên</span> @ViewBag.TotalPages</div>
+
+                        @if (ViewBag.CurrentPage < ViewBag.TotalPages)
+                        {
+                            <div id="next_page" class="page_next">
+                                <a href="@Url.Action("TimKiem", new { query = ViewBag.Query, page = ViewBag.CurrentPage + 1, pageSize = ViewBag.PageSize })">
+                                    <i class="fa fa-long-arrow-right" aria-hidden="true"></i>
+                                </a>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script src="~/Content/assets/js/categories_custom.js"></script>
+}

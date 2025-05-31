@@ -1,0 +1,342 @@
+﻿    @model HNStationaryStore.Models.EF.Product
+    @{
+        ViewBag.Title = "Thêm mới";
+        Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    }
+
+
+    <div class="row mb-2">
+        <div class="col-sm-6">
+            <h3 class="fw-bold text-dark">Thêm mới danh mục</h3>
+        </div>
+        <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+                <li class="breadcrumb-item"><a href="/admin/home">Home</a></li>
+                <li class="breadcrumb-item"><a href="/admin/products">Sản phẩm</a></li>
+                <li class="breadcrumb-item active">Thêm mới</li>
+            </ol>
+        </div>
+    </div>
+
+    <section class="content">
+
+        <!-- Default box -->
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="card-title fw-bold text-dark mb-0">Thông tin thêm mới sản phẩm</h5>
+
+            </div>
+            <div class="card-body">
+                    <div class="row">
+                        <div class="col-12">
+                            @using (Html.BeginForm("Add", "products", FormMethod.Post, new { }))
+                            {
+                                @Html.AntiForgeryToken()
+                                @Html.ValidationSummary(false)
+                            <div class="card col-12">
+                                <div class="card-header p-2">
+                                    <ul class="nav nav-pills">
+                                        <li class="nav-item"><a class="nav-link active" href="#activity" data-toggle="tab">Thông tin chung</a></li>
+                                        <li class="nav-item"><a class="nav-link" href="#timeline" data-toggle="tab">Hình ảnh</a></li>
+                                    </ul>
+                                </div><!-- /.card-header -->
+                                <div class="card-body">
+                                    <div class="tab-content">
+                                        <div class="active tab-pane" id="activity">
+                                            <div id="logins-part" class="content" role="tabpanel" aria-labelledby="logins-part-trigger">
+                                                <div class="form-group">
+                                                    <label for="exampleInputEmail1" style="color: #222; font-weight: 700;">Tên sản phẩm</label>
+                                                    @Html.TextBoxFor(x => x.ProductName, new { @class = "form-control", @placeholder = "Tên sản phẩm" })
+                                                    @Html.ValidationMessageFor(x => x.ProductName, null, new { @class = "text-danger" })
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="exampleInputEmail1" style="color: #222; font-weight: 700;">Nhà sản xuất</label>
+                                                    @Html.TextBoxFor(x => x.Manufacturer, new { @class = "form-control", @placeholder = "Nhà sản xuất" })
+                                                    @Html.ValidationMessageFor(x => x.Manufacturer, null, new { @class = "text-danger" })
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="CategoryID">Danh mục chính</label>
+                                                    @Html.DropDownListFor(x => x.ProductCategoryID,
+                                                        (SelectList)ViewBag.ProductCategoryList,
+                                                        "Chọn danh mục chính",
+                                                        new { @class = "form-control", id = "CategoryID" })
+                                                    @Html.ValidationMessageFor(x => x.ProductCategoryID, null, new { @class = "text-danger" })
+                                                </div>
+                                                <!-- Dropdown chọn danh mục con -->
+                                                <div class="form-group">
+                                                    <label for="SubCategoryID">Danh mục con</label>
+                                                    @Html.DropDownListFor(x => x.SubCategoryID,
+                                                        new SelectList(Enumerable.Empty<SelectListItem>()),
+                                                        "Chọn danh mục con",
+                                                        new { @class = "form-control", id = "SubCategoryID" })
+                                                    @Html.ValidationMessageFor(x => x.SubCategoryID, null, new { @class = "text-danger" })
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label for="exampleInputEmail1" style="color: #222; font-weight: 700;">Product Code</label>
+                                                    @Html.TextBoxFor(x => x.ProductCode, new { @class = "form-control", @placeholder = "Product Code" })
+
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="exampleInputPassword1" style="color: #222; font-weight: 700;">Chi tiết</label>
+                                                    @Html.TextAreaFor(x => x.Description, new { @class = "form-control", @id = "txtDetail" })
+                                                    @Html.ValidationMessageFor(x => x.Description, null, new { @class = "text-danger" })
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-4">
+                                                        <div class="form-group">
+                                                            <label for="exampleInputEmail1" style="color: #222; font-weight: 700;">Giá nhập</label>
+                                                            <input type="text" name="DemoPurchasePrice" id="DemoPurchasePrice" value="" class="form-control auto">
+                                                            @Html.HiddenFor(x => x.PurchasePrice, new { @class = "form-control", @placeholder = "Giá nhập" })
+                                                            @Html.ValidationMessageFor(x => x.PurchasePrice, null, new { @class = "text-danger" })
+                                                        </div>
+
+                                                    </div>
+                                                    <div class="col-4">
+                                                        <div class="form-group">
+                                                            <label for="exampleInputEmail1" style="color: #222; font-weight: 700;">Giá bán</label>
+                                                            <input type="text" name="DemoSalePrice" value="" id="DemoSalePrice" class="form-control auto" data-a-dec="," data-a-sep="." />
+                                                            @Html.HiddenFor(x => x.SalePrice, new { @class = "", @placeholder = "Giá" })
+                                                            @Html.ValidationMessageFor(x => x.SalePrice, null, new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-4">
+                                                        <div class="form-group">
+                                                            <label for="exampleInputEmail1" style="color: #222; font-weight: 700;">Số lượng</label>
+                                                            @Html.TextBoxFor(x => x.StockQuantity, new { @class = "form-control", @placeholder = "Số lượng" })
+                                                            @Html.ValidationMessageFor(x => x.StockQuantity, null, new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="exampleInputEmail1" style="color: #222; font-weight: 700;">Sale</label>
+                                                    @Html.CheckBoxFor(x => x.IsSale)
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-4">
+                                                        <div class="form-group">
+                                                            <label for="exampleInputEmail1" style="color: #222; font-weight: 700;">Phần trăm giảm giá</label>
+                                                            @Html.TextBoxFor(x => x.DiscountPercentage, new { @class = "form-control", @placeholder = "Phần trăm giảm giá" })
+                                                            @Html.ValidationMessageFor(x => x.DiscountPercentage, null, new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                    <!-- Thay đổi các trường ngày -->
+                                                    <div class="col-4">
+                                                        <div class="form-group">
+                                                            <label>Ngày bắt đầu</label>
+                                                            @Html.TextBoxFor(x => x.DiscountStartDate, "{0:yyyy-MM-dd}", new { @class = "form-control", type = "date" })
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-4">
+                                                        <div class="form-group">
+                                                            <label>Ngày kết thúc</label>
+                                                            @Html.TextBoxFor(x => x.DiscountEndDate, "{0:yyyy-MM-dd}", new { @class = "form-control", type = "date" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row ">
+                                                    <div class="col-6">
+                                                        <div class="form-group">
+                                                            <label for="exampleInputEmail1" style="color: #222; font-weight: 700;">Hiển thị</label>
+                                                            @Html.CheckBoxFor(x => x.IsActived, new { @checked = true })
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-6">
+                                                        <div class="form-group">
+                                                            <label for="exampleInputEmail1" style="color: #222; font-weight: 700;">Nổi bật</label>
+                                                            @Html.CheckBoxFor(x => x.IsHot)
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+
+                                            </div>
+                                            
+                                        </div>
+                                        <!-- /.tab-pane -->
+                                        <div class="tab-pane " id="timeline">
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+
+                                                    <div class="input-group">
+
+                                                        <div class="input-group-append">
+                                                            <input type="button" class="btn btn-success" value="tải ảnh" onclick="BrowseServer('txtImage')" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <table class="table table-hover" id="tbAnhSP">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>#</th>
+                                                            <th>Ảnh</th>
+                                                            <th>Ảnh đại diện</th>
+                                                            <th>Thao tác</th>
+                                                            <th></th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="tbHtml">
+                                                        @*<tr>
+                                    <td>1</td>
+                                    <td><img width="80" src="~/Uploads/images/Screenshot 2024-06-09 134304.png" /></td>
+                                    <td><input type="radio" name="rDefault" /></td>
+                                    <td><a href="#" class="btn btn-sm btn-danger">Xóa</a></td>
+                                    <td></td>
+                                </tr>*@
+                                                    </tbody>
+                                                </table>
+                                                <input type="hidden" id="tCurrentId" value="0" />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div><!-- /.card-body -->
+                                <div class="form-group">
+                                    <button type="submit" class="btn btn-primary my-3">Thêm mới</button>
+                                </div>
+                            </div>
+                            }
+                        </div>
+
+                    </div>
+               
+            </div>
+            <!-- /.card-body -->
+            <div class="card-footer">
+
+            </div>
+            <!-- /.card-footer-->
+        </div>
+        <!-- /.card -->
+
+    </section>
+    @section scripts{
+
+        <script>
+                $(document).ready(function() {
+        $('#CategoryID').change(function() {
+            var categoryId = $(this).val();
+            if (categoryId) {
+                // Gửi yêu cầu AJAX để lấy danh mục con
+                $.ajax({
+                    url: '@Url.Action("GetSubCategoriesByCategory", "Products")',  // Thay đổi action và controller phù hợp
+                    data: { categoryId: categoryId },
+                    success: function(data) {
+                        $('#SubCategoryID').empty();  // Xóa tất cả các option hiện tại
+                        $('#SubCategoryID').append('<option value="">Chọn danh mục con</option>');  // Thêm option mặc định
+                        $.each(data, function(i, item) {
+                            $('#SubCategoryID').append('<option value="' + item.Value + '">' + item.Text + '</option>');
+                        });
+                    },
+                    error: function() {
+                        alert('Có lỗi xảy ra khi tải danh mục con');
+                    }
+                });
+            } else {
+                $('#SubCategoryID').empty();
+                $('#SubCategoryID').append('<option value="">Chọn danh mục con</option>');
+            }
+        });
+    });
+
+
+            $('.auto').autoNumeric('init');
+            $('#DemoSalePrice').bind('blur focusout keypress keyup', function () {
+                var demoGet = $('#DemoSalePrice').autoNumeric('get');
+                $('#SalePrice').val(demoGet);
+                $('#SalePrice').autoNumeric('set', demoGet);
+            });
+
+
+            $('#DemoPurchasePrice').bind('blur focusout keypress keyup', function () {
+                var demoGet = $('#DemoPurchasePrice').autoNumeric('get');
+                $('#PurchasePrice').val(demoGet);
+                $('#PurchasePrice').autoNumeric('set', demoGet);
+            });
+
+
+            CKEDITOR.replace('txtDetail', {
+                customConfig: '/content/ckeditor/config.js',
+                extraAllowedContent: 'span',
+                autoUpdateElement: true // Tự động cập nhật giá trị vào textarea khi submit
+            });
+
+            $('body').on('click', '.btnXoaAnh', function () {
+                var conf = confirm('Bạn có muốn xóa ảnh này không?');
+                if (conf === true) {
+                    var _id = $(this).data('id');
+                    $('#trow_' + _id).fadeTo('fast', 0.5, function () {
+                        $(this).slideUp('fast', function () {
+                            $(this).remove();
+                        });
+                    });
+                    var temp = $('#tCurrentId').val();
+                    var currentId = parseInt(temp) - 1;
+                    $('#tCurrentId').val(currentId);
+                }
+            })
+
+            function BrowseServer(field) {
+                var finder = new CKFinder();
+                finder.selectActionFunction = function (fileUrl) {
+                    AddImageProduct(fileUrl)
+                };
+                finder.popup();
+            }
+            // Cập nhật giá trị CKEditor trước khi submit
+            $('form').submit(function () {
+                for (var instance in CKEDITOR.instances) {
+                    CKEDITOR.instances[instance].updateElement();
+                }
+                return true;
+            });
+
+            //add ảnh
+            function AddImageProduct(url) {
+                var temp = $('#tCurrentId').val();
+                var currentId = parseInt(temp) + 1;
+                var str = "";
+
+                if (currentId == 1) {
+                    str += `
+                     <tr id="trow_${currentId}">
+                        <td>${currentId}</td>
+                        <td><img width="80" src="${url}" /> <input type="hidden" name="Images" value="${url}" /> </td>
+                        <td><input type="radio" name="rDefault" value="${currentId}" checked="checked"/></td>
+                        <td><a href="#" data-id="${currentId}" class="btn btn-sm btn-danger btnXoaAnh">Xóa</a></td>
+                     </tr>`;
+                            }
+                            else {
+                                str += `
+                     <tr id="trow_${currentId}">
+                        <td>${currentId}</td>
+                        <td><img width="80" src="${url}" /> <input type="hidden" name="Images" value="${url}" /> </td>
+                        <td><input type="radio" name="rDefault" value="${currentId}"/></td>
+                        <td><a href="#" data-id="${currentId}" class="btn btn-sm btn-danger btnXoaAnh">Xóa</a></td>
+                     </tr>`;
+                }
+
+                $('#tbHtml').append(str);
+                $('#tCurrentId').val(currentId);
+            }
+
+            // Sửa lại sự kiện submit form
+            $('form').submit(function (e) {
+                // Cập nhật giá trị CKEditor
+                for (var instance in CKEDITOR.instances) {
+                    CKEDITOR.instances[instance].updateElement();
+                }
+
+                // Kiểm tra nếu không có ảnh nào được thêm
+                if ($('#tbHtml tr').length === 0) {
+                    if (!confirm('Bạn chưa thêm ảnh nào cho sản phẩm. Bạn có muốn tiếp tục không?')) {
+                        e.preventDefault();
+                        return false;
+                    }
+                }
+
+                return true;
+            });
+        </script>
+    }

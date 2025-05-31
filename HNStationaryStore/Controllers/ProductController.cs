@@ -1,0 +1,188 @@
+﻿using HNStationaryStore.Models;
+using HNStationaryStore.Models.EF;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+
+namespace HNStationaryStore.Controllers
+{
+    public class ProductController : Controller
+    {
+        private ApplicationDbContext db = new ApplicationDbContext();
+        // GET: Product
+        public ActionResult Index(int page = 1, int pageSize = 16)
+        {
+            var items = db.Products.OrderBy(x => x.ProductID).ToList(); // hoặc sắp xếp theo điều kiện mong muốn
+
+            int totalItems = items.Count();
+            int totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
+
+            var pagedItems = items.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+
+            ViewBag.CurrentPage = page;
+            ViewBag.TotalPages = totalPages;
+
+            return View(pagedItems);
+        }
+
+        public ActionResult Detail(int id)
+        {
+            var product = db.Products.Find(id);
+            if (product == null)
+            {
+                return HttpNotFound();
+            }
+            return View(product);
+        }
+        public ActionResult Partial_ItemById()
+        {
+            var items = db.Products.Where(x => x.IsHot).Take(12).ToList();
+            return PartialView(items);
+        }
+        public ActionResult Partial_ItemSale()
+        {
+            DateTime now = DateTime.Now;
+
+            var items = db.Products
+                          .Where(x => x.IsSale
+                                      && x.DiscountPercentage > 0
+                                      && x.DiscountStartDate <= now
+                                      && x.DiscountEndDate >= now)
+                          .Take(10)
+                          .ToList();
+
+            return PartialView(items);
+        }
+
+        public ActionResult ProductBySubCategory(int id, int page = 1, int pageSize = 16)
+        {
+            // Include các liên kết cần thiết
+            var subCategory = db.SubCategories
+                                .Include("Products.ProductImages")
+                                .Include("ProductCategory")
+                                .FirstOrDefault(s => s.SubCategoryID == id);
+
+            if (subCategory == null)
+            {
+                return HttpNotFound();
+            }
+
+            ViewBag.CategoryName = subCategory.ProductCategory.CategoryName;
+            ViewBag.SubCategoryName = subCategory.SubCategoryName;
+            ViewBag.SubCategoryID = id;
+            ViewBag.PageSize = pageSize;
+
+            // Lọc sản phẩm đã kích hoạt
+            var filteredProducts = subCategory.Products
+                                              .Where(p => p.IsActived)
+                                              .OrderByDescending(p => p.IsHot)
+                                              .ThenByDescending(p => p.CreatedAt)
+                                              .ToList();
+
+            int totalItems = filteredProducts.Count();
+            int totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
+            var pagedProducts = filteredProducts
+                                .Skip((page - 1) * pageSize)
+                                .Take(pageSize)
+                                .ToList();
+
+            ViewBag.CurrentPage = page;
+            ViewBag.TotalPages = totalPages;
+
+            return View(pagedProducts);
+        }
+
+
+        public ActionResult ProductByCategory(int id, int page = 1, int pageSize = 16)
+        {
+            var category = db.ProductCategories.FirstOrDefault(c => c.CategoryId == id);
+            if (category == null)
+            {
+                return HttpNotFound();
+            }
+
+            var allProducts = db.Products
+                                .Include("ProductImages")
+                                .Where(p => p.ProductCategoryID == id && p.IsActived)
+                                .OrderByDescending(p => p.IsHot)
+                                .ThenByDescending(p => p.CreatedAt)
+                                .ToList();
+
+            int totalItems = allProducts.Count();
+            int totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
+            var pagedProducts = allProducts.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+
+            ViewBag.CategoryName = category.CategoryName;
+            ViewBag.CurrentPage = page;
+            ViewBag.TotalPages = totalPages;
+            ViewBag.CategoryId = id;
+
+            return View(pagedProducts);
+        }
+
+        public ActionResult _ProductReviews()
+        {
+           
+            return PartialView();
+        }
+
+        public ActionResult _ReviewForm()
+        {
+
+            return PartialView();
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult AddReview(ProductReview model)
+        {
+            // Kiểm tra người dùng đã đăng nhập chưa
+            if (!User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Login", "Account", new { returnUrl = Url.Action("Detail", "Product") });
+            }
+            if (!ModelState.IsValid)
+            {
+                TempData["ReviewError"] = "Vui lòng điền đầy đủ thông tin hợp lệ.";
+                return RedirectToAction("Details", new { id = model.ProductID });
+            }
+
+            model.CreatedDate = DateTime.Now;
+            db.ProductReviews.Add(model);
+            db.SaveChanges();
+
+            // Redirect về trang Details sau khi lưu thành công để reset form và không bị lỗi
+            return RedirectToAction("Detail", new { id = model.ProductID });
+        }
+
+        [HttpGet]
+        public ActionResult TimKiem(string query, int page = 1, int pageSize = 16)
+        {
+            if (string.IsNullOrWhiteSpace(query))
+            {
+                ViewBag.TuKhoa = "";
+                return View("KetQuaTimKiem", new List<Product>());
+            }
+
+            var ketQua = db.Products
+                           .Include("ProductImages")
+                           .Where(sp => sp.IsActived && sp.ProductName.Contains(query))
+                           .OrderByDescending(sp => sp.IsHot)
+                           .ThenByDescending(sp => sp.CreatedAt)
+                           .ToList();
+
+            int totalItems = ketQua.Count();
+            int totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
+            var pagedKetQua = ketQua.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+
+            ViewBag.TuKhoa = query;
+            ViewBag.CurrentPage = page;
+            ViewBag.TotalPages = totalPages;
+
+            return View("TimKiem", pagedKetQua);
+        }
+
+
+    }
+}

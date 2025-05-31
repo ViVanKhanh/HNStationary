@@ -1,0 +1,82 @@
+﻿@model HNStationaryStore.Models.EF.Product
+
+<div class="box-section">
+    <div class="tab_title reviews_title">
+        <h4>Đánh giá sản phẩm</h4>
+        <div class="rating-summary d-flex align-items-center mb-3">
+            <div class="average-rating mr-3">
+                @{
+                    double averageRating = 0;
+                    int totalReviews = Model.ProductReviews?.Count ?? 0;
+
+                    if (totalReviews > 0)
+                    {
+                        averageRating = Model.ProductReviews.Average(r => r.Rating);
+                    }
+
+                    var fullStars = (int)averageRating;
+                    var hasHalfStar = (averageRating - fullStars) >= 0.5;
+                }
+
+                <div class="stars">
+                    @for (int i = 1; i <= 5; i++)
+                    {
+                        if (i <= fullStars)
+                        {
+                            <i class="fa fa-star text-warning" aria-hidden="true"></i>
+                        }
+                        else if (i == fullStars + 1 && hasHalfStar)
+                        {
+                            <i class="fa fa-star-half-o text-warning" aria-hidden="true"></i>
+                        }
+                        else
+                        {
+                            <i class="fa fa-star-o text-warning" aria-hidden="true"></i>
+                        }
+                    }
+                </div>
+                <div class="rating-text">
+                    @averageRating.ToString("0.0") trên 5 (@totalReviews đánh giá)
+                </div>
+
+            </div>
+    </div>
+
+    <!-- Danh sách đánh giá -->
+    <div class="review-list">
+        @if (Model.ProductReviews != null && Model.ProductReviews.Any())
+        {
+            foreach (var review in Model.ProductReviews.OrderByDescending(r => r.CreatedDate))
+            {
+                <div class="review-item mb-4 pb-3 border-bottom">
+                    <div class="review-header d-flex justify-content-between mb-2">
+                        <h5 class="reviewer-name mb-0">@review.ReviewerName</h5>
+                        <div class="review-date text-muted">
+                            @review.CreatedDate.ToString("dd/MM/yyyy")
+                        </div>
+                    </div>
+                    <div class="review-rating mb-2">
+                        @for (int i = 1; i <= 5; i++)
+                        {
+                            if (i <= review.Rating)
+                            {
+                                <i class="fa fa-star text-warning" aria-hidden="true"></i>
+                            }
+                            else
+                            {
+                                <i class="fa fa-star-o text-warning" aria-hidden="true"></i>
+                            }
+                        }
+                    </div>
+                    <div class="review-content">
+                        <p>@review.Comment</p>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <p class="text-muted">Chưa có đánh giá nào cho sản phẩm này.</p>
+        }
+    </div>
+</div>

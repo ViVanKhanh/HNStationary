@@ -1,0 +1,18 @@
+﻿@model IEnumerable<HNStationaryStore.Models.EF.ProductCategory>
+
+@if (Model != null && Model.Any())
+{
+    <div class="new_arrivals_sorting">
+        <ul class="arrivals_grid_sorting clearfix button-group filters-button-group">
+            @{
+                // Get the first category ID to set as default
+                var firstCategoryId = Model.First().CategoryId;
+            }
+            @foreach (var item in Model)
+            {
+                <li class="grid_sorting_button button d-flex flex-column justify-content-center align-items-center @(item.CategoryId == firstCategoryId ? "active is-checked" : "")"
+                    data-filter=".category-@item.CategoryId">@item.CategoryName</li>
+                }
+        </ul>
+    </div>
+}

@@ -1,0 +1,79 @@
+﻿@model IEnumerable<HNStationaryStore.Models.EF.Product>
+
+@if (Model != null && Model.Any())
+{
+    foreach (var item in Model)
+    {
+        var categoryClass = "category-" + item.ProductCategory.CategoryId;
+
+        <!-- Product Item -->
+        <div class="product-item @categoryClass" data-category="@item.ProductCategory.CategoryId">
+            <div class="product discount product_filter">
+                <div class="product_image">
+                    @if (item.ProductImages != null && item.ProductImages.Any())
+                    {
+                        var firstImage = item.ProductImages.FirstOrDefault();
+                        <img src="@firstImage.ImageURL" alt="@item.ProductName">
+                    }
+                    else
+                    {
+                        <img src="~/Content/images/default-product-image.jpg" alt="@item.ProductName">
+                    }
+                </div>
+                <div class="favorite favorite_left"></div>
+                @if (item.IsOnSale)
+                {
+                    <div class="product_bubble product_bubble_right product_bubble_red d-flex flex-column align-items-center">
+                        <span>-@item.DiscountPercentage%</span>
+                    </div>
+                }
+                <div class="product_info">
+                    <h6 class="product_name"><a href="/chi-tiet/@item.Alias-p@(item.ProductID)">@item.ProductName</a></h6>
+                    @if (item.IsOnSale)
+                    {
+                        <div class="product_price">@item.DiscountedPrice.ToString("N0").Replace(",", ".") VND<span>@item.SalePrice.ToString("N0").Replace(",", ".") VND</span></div>
+                    }
+                    else
+                    {
+                        <div class="product_price">@item.SalePrice.ToString("N0").Replace(",", ".") VND</div>
+                    }
+                </div>
+            </div>
+            <div class="red_button add_to_cart_button"><a href="#" class="btnAddToCard" data-id="@item.ProductID">Thêm giỏ hàng</a></div>
+        </div>
+    }
+}
+else
+{
+    <p>No products found.</p>
+}
+<script src="https://unpkg.com/isotope-layout@3/dist/isotope.pkgd.min.js"></script>
+<script>
+    $(document).ready(function () {
+        // Lấy filter của button đầu tiên đang active
+        var defaultFilter = $('.grid_sorting_button.active').data('filter');
+
+        // Khởi tạo Isotope với filter mặc định
+        var $grid = $('.product-grid').isotope({
+            itemSelector: '.product-item',
+            layoutMode: 'fitRows',
+            filter: defaultFilter
+        });
+
+        // Bắt sự kiện khi click vào button filter
+        $('.filters-button-group').on('click', '.grid_sorting_button', function () {
+            $('.grid_sorting_button').removeClass('active is-checked');
+            $(this).addClass('active is-checked');
+
+            var filterValue = $(this).attr('data-filter');
+            $grid.isotope({ filter: filterValue });
+        });
+
+        // Xử lý thêm vào giỏ hàng
+        $('.add_to_cart_button a').click(function (e) {
+            e.preventDefault();
+            var productId = $(this).data('id');
+            console.log('Adding product ID:', productId);
+        });
+    });
+</script>

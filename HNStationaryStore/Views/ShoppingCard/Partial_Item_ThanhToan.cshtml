@@ -1,0 +1,32 @@
+﻿
+@model IEnumerable<HNStationaryStore.Models.ShoppingCardItem>
+
+
+        @if (Model != null && Model.Any())
+        {
+            <h2 class="text-center text-danger">Giỏ hàng</h2>
+            var i = 0;
+            var tongtien = decimal.Zero;
+            <table class="table text-center" >
+                <tr>
+                    <th>Sản phầm</th>
+                    <th>Số lượng</th>
+                    <th>Đơn giá</th>
+                </tr>
+                @foreach (var item in Model)
+                {
+                    tongtien += item.TotalPrice;
+                    <tr>
+                        <td>@item.ProductName</td>
+                        <td>@item.Quantity</td>
+                        <td>@item.Price.ToString("N0").Replace(",", ".")</td>
+                    </tr>
+
+                }
+                <tr>
+                    <th class="h2">Tổng tiền</th>
+                    <th class="h2" colspan="2">@tongtien.ToString("N0").Replace(",", ".")</th>
+                </tr>
+            </table>
+            
+        }

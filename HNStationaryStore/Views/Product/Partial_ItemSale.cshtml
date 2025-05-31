@@ -1,0 +1,50 @@
+﻿@model IEnumerable<HNStationaryStore.Models.EF.Product>
+
+@if (Model != null && Model.Any())
+{
+    foreach (var item in Model)
+    {
+        <div class="owl-item product_slider_item">
+            <div class="product-item">
+                <div class="product @(item.IsOnSale ? "discount" : "")">
+                    <div class="product_image">
+                        @{
+                            var firstImage = item.ProductImages?.FirstOrDefault();
+                            var imgUrl = firstImage != null ? Url.Content(firstImage.ImageURL) : Url.Content("~/Content/images/default-product-image.jpg");
+                        }
+                        <img src="@imgUrl" alt="@item.ProductName" />
+                    </div>
+                    <div class="favorite favorite_left"></div>
+
+                    @if (item.DiscountPercentage > 0)
+                    {
+                        <div class="product_bubble product_bubble_right product_bubble_red d-flex flex-column align-items-center">
+                            <span>-@item.DiscountPercentage%</span>
+                        </div>
+                    }
+
+                <div class="product_info">
+                    <h6 class="product_name">
+                        <a href="/chi-tiet/@item.Alias-p@(item.ProductID)">@item.ProductName</a>
+                    </h6>
+                    <div class="product_price">
+                            @item.DiscountedPrice.ToString("N0").Replace(",", ".") VND
+                        @if (item.SalePrice > 0)
+                        {
+                            <span style="text-decoration: line-through; color: gray; margin-left: 8px;">
+                                @item.SalePrice.ToString("N0").Replace(",", ".") VND
+                            </span>
+                        }
+                    </div>
+
+
+                </div>
+                </div>
+            </div>
+        </div>
+    }
+}
+else
+{
+    <p>Không có sản phẩm nào.</p>
+}

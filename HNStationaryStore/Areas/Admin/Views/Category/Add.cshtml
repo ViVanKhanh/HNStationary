@@ -1,0 +1,76 @@
+﻿@model HNStationaryStore.Models.EF.Category
+
+@{
+    ViewBag.Title = "Thêm mới danh mục";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row mb-2">
+    <div class="col-sm-6">
+        <h3 class="fw-bold text-dark">Thêm mới danh mục</h3>
+    </div>
+    <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href="/admin/home">Home</a></li>
+            <li class="breadcrumb-item"><a href="/admin/Category">Danh mục</a></li>
+            <li class="breadcrumb-item active">Thêm mới</li>
+        </ol>
+    </div>
+</div>
+
+<section class="content">
+
+    <!-- Default box -->
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="card-title fw-bold text-dark mb-0">Thông tin thêm mới danh mục</h5>
+
+        </div>
+        <div class="card-body">
+            <div class="card-body p-0">
+                <div class="bs-stepper-content">
+                    @using (Html.BeginForm("Add", "Category", FormMethod.Post, new { }))
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.ValidationSummary(false)
+                    <div id="logins-part" class="content" role="tabpanel" aria-labelledby="logins-part-trigger">
+                        <div class="form-group">
+                            <label for="exampleInputEmail1" style="color: #222; font-weight: 700;">Tên danh muc</label>
+                            @Html.TextBoxFor(x => x.Title, new { @class = "form-control", @placeholder = "Tên danh mục" })
+                            @Html.ValidationMessageFor(x => x.Title, null, new { @class = "text-danger" })
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleInputPassword1" style="color: #222; font-weight: 700;">Vị trí</label>
+                            @Html.TextBoxFor(x => x.Position, new { @class = "form-control", @placeholder = "Vị trí" })
+                            @Html.ValidationMessageFor(x => x.Position, null, new { @class = "text-danger" })
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleInputPassword1" style="color: #222; font-weight: 700;">Hoạt động</label>
+                            @Html.DropDownListFor(x => x.IsActive, new List<SelectListItem>
+                            {
+                                new SelectListItem { Text = "Hoạt động", Value = "true" },
+                                new SelectListItem { Text = "Không hoạt động", Value = "false" }
+                            }, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(x => x.IsActive, null, new { @class = "text-danger" })
+                        </div>
+                       
+                    </div>
+                        <div id="information-part" class="content" role="tabpanel" aria-labelledby="information-part-trigger">
+                            
+                            <a href="/admin/Category" class="btn btn-danger" >Quay lại</a>
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </div>
+                    }
+
+                </div>
+            </div>
+        </div>
+        <!-- /.card-body -->
+        <div class="card-footer">
+           
+        </div>
+        <!-- /.card-footer-->
+    </div>
+    <!-- /.card -->
+
+</section>

@@ -1,0 +1,125 @@
+﻿@model HNStationaryStore.Models.OrderViewModel
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ajax-unobtrusive/3.2.6/jquery.unobtrusive-ajax.min.js"></script>
+@using (Ajax.BeginForm("CheckOut", "ShoppingCard", new AjaxOptions
+{
+    HttpMethod = "POST",
+    UpdateTargetId = "load_data",
+    OnSuccess = "OnSuccessCO",
+    OnFailure = "OnFailure",
+    OnBegin = "OnBeginCO"
+}, new { @id = "myForm" }))
+{
+    <script>
+        //function OnBeginCO() {
+        //    $('#btnCheckOut').attr("disabled", "disabled");
+        //    $('#load_send').html('<h2>Đang gửi....</h2>');
+        //}
+        function OnSuccessCO(res) {
+            console.log("Received response:", res); // Kiểm tra response nhận được
+
+            // Nếu res là string (chưa parse JSON)
+            if (typeof res === 'string') {
+                try {
+                    res = JSON.parse(res);
+                } catch (e) {
+                    console.error("Failed to parse JSON:", e);
+                    return;
+                }
+            }
+
+            if (res.Success) {
+                if (res.Code == 1) {
+                    window.location.href = "/ShoppingCard/CheckOutSuccess";
+                }
+                else if (res.Code == 2 && res.Url) {
+                    console.log("Redirecting to payment URL:", res.Url);
+                    // Dùng cách này để đảm bảo chuyển hướng
+                    window.location.href = res.Url;
+                }
+            } else {
+                alert("Có lỗi xảy ra khi xử lý đơn hàng");
+            }
+        }
+                            //function OnFailure() {
+
+                            //}
+    </script>
+    @Html.AntiForgeryToken()
+
+    <div class="form-group">
+        <label class="h6">Họ và tên</label>
+        @Html.TextBoxFor(m => m.CustomerName, new { @class = "form-control", required = "required", autocomplete = "off" })
+    </div>
+
+    <div class="form-group">
+        <label class="h6">Số điện thoại</label>
+        @Html.TextBoxFor(m => m.Phone, new { @class = "form-control", required = "required", autocomplete = "off" })
+    </div>
+
+    <div class="form-group">
+        <label class="h6">Địa chỉ</label>
+        @Html.TextBoxFor(m => m.Address, new { @class = "form-control", required = "required", autocomplete = "off" })
+    </div>
+
+    <div class="form-group">
+        <label class="h6">Email</label>
+        @Html.TextBoxFor(m => m.Email, new { @class = "form-control", required = "required", autocomplete = "off" })
+    </div>
+
+    <div class="form-group">
+        <label class="h6">Thanh toán</label>
+        @Html.DropDownListFor(m => m.TypePayment,
+            new SelectList(new[] {
+                new { Value = 1, Text = "COD" },
+                new { Value = 2, Text = "Chuyển khoản" }
+            }, "Value", "Text"),
+            new { @class = "form-control", @id = "drTypePayment" })
+    </div>
+    <div class="form-group" id="load_form_payment" style="display:none;">
+        <h4> <label>Chọn phương thức thanh toán:</label><br /></h4>
+        <h5>Cách 1: Chuyển hướng sang VNPAY chọn phương thức thanh toán</h5>
+        <label><input type="radio" name="TypePaymentVN" value="0" checked /> Cổng thanh toán VNPAYQR </label>
+        <h5>Cách 2: Tách phương thức thanh toán tại site của Merchant</h5>
+        <label><input type="radio" name="TypePaymentVN" value="1" /> Thanh toán qua ứng dụng hỗ trợ VNPAYQR </label><br />
+        <label><input type="radio" name="TypePaymentVN" value="2" /> ATM-Tài khoản ngân hàng nội địa </label><br />
+        <label><input type="radio" name="TypePaymentVN" value="3" /> Thanh toán qua thẻ quốc tế </label><br />
+    </div>
+    <div id="loading-message" class="text-info my-2"></div>
+
+    <div class="col-12 my-3 form-group">
+        <button type="submit" class="btn btn-block btn-success">Đặt hàng</button>
+    </div>
+}
+<script>
+    function OnBeginCO() {
+        $('#loading-message').html('<strong>Đang gửi...</strong>');
+    }
+
+    function OnSuccessCO(res) {
+        $('#loading-message').html(''); // Xóa dòng chữ khi đã gửi xong
+
+        if (typeof res === 'string') {
+            try {
+                res = JSON.parse(res);
+            } catch (e) {
+                console.error("Failed to parse JSON:", e);
+                return;
+            }
+        }
+
+        if (res.Success) {
+            if (res.Code == 1) {
+                window.location.href = '@Url.Action("CheckOutSuccess", "ShoppingCard")';
+            } else if (res.Code == 2 && res.Url) {
+                window.location.href = res.Url;
+            }
+        } else {
+            alert("Có lỗi xảy ra khi xử lý đơn hàng");
+        }
+    }
+
+    function OnFailure() {
+        $('#loading-message').html('<span class="text-danger">Đặt hàng thất bại, vui lòng thử lại.</span>');
+    }
+</script>

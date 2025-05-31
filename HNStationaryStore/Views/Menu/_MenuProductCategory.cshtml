@@ -1,0 +1,40 @@
+﻿@model IEnumerable<HNStationaryStore.Models.EF.ProductCategory>
+
+@if (Model != null && Model.Any())
+{
+    <ul class="top_nav_menu">
+        <li class="language">
+            <a href="#">
+                Danh mục sản phẩm
+                <i class="fa fa-angle-down"></i>
+            </a>
+            <ul class="language_selection">
+                @foreach (var category in Model)
+                {
+                    if (category.SubCategories != null && category.SubCategories.Any())
+                    {
+                        <li class="has-submenu">
+                            <a href="@Url.Action("ProductByCategory", "Product", new { id = category.CategoryId })">
+                                @category.CategoryName
+                            </a>
+                            <ul class="submenu">
+                                @foreach (var sub in category.SubCategories)
+                                {
+                                    <li>
+                                        <a href="@Url.Action("ProductBySubCategory", "Product", new { id = sub.SubCategoryID })">
+                                            @sub.SubCategoryName
+                                        </a>
+                                    </li>
+                                }
+                            </ul>
+                        </li>
+                    }
+                    else
+                    {
+                        <li><a href="#">@category.CategoryName</a></li>
+                    }
+                }
+            </ul>
+        </li>
+    </ul>
+}

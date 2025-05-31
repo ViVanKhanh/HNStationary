@@ -1,0 +1,99 @@
+﻿
+@{
+    ViewBag.Title = "Thanh Toán";
+}
+
+
+
+@{
+    ViewBag.Title = "Giỏ hàng";
+}
+
+<link rel="stylesheet" type="text/css" href="~/Content/assets/styles/categories_styles.css">
+<link rel="stylesheet" type="text/css" href="~/Content/assets/styles/categories_responsive.css">
+
+<div class="container product_section_container">
+    <div class="breadcrumbs d-flex flex-row align-items-center mb-3">
+        <ul>
+            <li><a href="/">Trang chủ</a></li>
+            <li><a><i class="fa fa-angle-right" aria-hidden="true"></i>Thanh toán</a></li>
+        </ul>
+    </div>
+    <div class="row">
+        <div class="col product_section clearfix">
+            <div class="row ">
+                <div class="col-md-12 text-center">
+                    <h1 class="text-danger">Xác nhận thanh toán</h1>
+                    <p></p>
+                    <hr />
+                </div>
+
+            </div>
+            @if (ViewBag.CheckCard != null)
+            {
+                <div class="row ">
+
+                    <div class="col-md-4" style="border: 1px solid #808080">
+                        @Html.Action("Partial_Item_ThanhToan", "ShoppingCard")
+                    </div>
+                    <div class="col-md-8 p-3" style="border: 1px solid #808080">
+                        <div id="show_success"></div>
+                        @Html.Action("Partial_CheckOut", "ShoppingCard")
+                    </div>
+
+                </div>
+            }
+            else
+            {
+                <div>
+                    <p class="text-center">Bạn chưa có sản phẩm nào. Vui lòng quay lại trang <a class="text-danger" href="/san-pham">Sản phẩm</a> đề mua hàng</p>
+                </div>
+            }
+
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/jquery.validation/1.19.5/jquery.validate.min.js"></script>
+
+    <script>
+        function OnFailure(rs) {
+            if (!rs.Success) {
+                $('#show_success').html("Bạn đã mua hàng thất bại. Xin vui lòng thử lại")
+            }
+        }
+        $(document).ready(function () {
+            $('body').on('change', '#drTypePayment', function () {
+                var type = $(this).val();
+                $('#load_form_payment').hide();
+                if (type == "2") {
+                    $('#load_form_payment').show();
+                }
+            });
+            $('#myForm').validate({
+                rules: {
+                    'CustomerName': {
+                        required: true
+                    },
+                    'Phone': {
+                        required: true
+                    },
+                    'Address': {
+                        required: true
+                    },
+                    'Email': {
+                        required: true,
+                        email: true
+                    }
+                },
+                messages: {
+                    'CustomerName': 'Bạn khổng để trống trường này',
+                    'Phone': 'Bạn khổng để trống trường này',
+                    'Address': 'Bạn khổng để trống trường này',
+                    'Email': 'Email chưa hợp lệ'
+                }
+            });
+        });
+    </script>
+}

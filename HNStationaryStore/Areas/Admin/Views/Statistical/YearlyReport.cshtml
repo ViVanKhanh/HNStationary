@@ -1,0 +1,108 @@
+﻿@model IEnumerable<HNStationaryStore.Models.YearlyReportViewModel>
+@{
+    ViewBag.Title = "Báo cáo doanh thu theo năm";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid">
+    <a class="btn btn-success mb-3" href="/Admin/Statistical">Quay lại</a>
+    <h1 class="h3 mb-2 text-gray-800">Báo cáo doanh thu theo năm</h1>
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Doanh thu theo năm</h6>
+        </div>
+        <div class="card-body">
+            <div class="chart-area">
+                <canvas id="yearlyRevenueChart" height="300"></canvas>
+            </div>
+            <hr>
+            <div class="table-responsive">
+                <table class="table table-bordered" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Năm</th>
+                            <th>Số đơn hàng</th>
+                            <th>Doanh thu</th>
+                            <th>Tăng trưởng</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            var prevYearRevenue = 0M;
+                            var isFirstYear = true;
+                        }
+                        @foreach (var item in Model.OrderBy(x => x.Year))
+                        {
+                            var growthRate = isFirstYear ? 0 : ((item.TotalRevenue - prevYearRevenue) / prevYearRevenue * 100);
+                            <tr>
+                                <td>@item.Year</td>
+                                <td>@item.OrderCount</td>
+                                <td>@string.Format("{0:N0}", item.TotalRevenue) đ</td>
+                                <td>
+                                    @if (!isFirstYear)
+                                    {
+                                        <span class="@(growthRate >= 0 ? "text-success" : "text-danger")">
+                                            <i class="fas @(growthRate >= 0 ? "fa-arrow-up" : "fa-arrow-down")"></i>
+                                            @Math.Round(growthRate, 1)%
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span>N/A</span>
+                                    }
+                                </td>
+                            </tr>
+                            prevYearRevenue = item.TotalRevenue;
+                            isFirstYear = false;
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script>
+        // Yearly Revenue Chart
+        var ctx = document.getElementById('yearlyRevenueChart');
+        var yearlyRevenueChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [@Html.Raw(string.Join(",", Model.OrderBy(x => x.Year).Select(x => "'" + x.Year + "'")))],
+                datasets: [{
+                    label: 'Doanh thu',
+                    data: [@string.Join(",", Model.OrderBy(x => x.Year).Select(x => x.TotalRevenue))],
+                    backgroundColor: 'rgba(78, 115, 223, 0.05)',
+                    borderColor: 'rgba(78, 115, 223, 1)',
+                    pointBackgroundColor: 'rgba(78, 115, 223, 1)',
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: 'rgba(78, 115, 223, 1)',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                maintainAspectRatio: false,
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true,
+                            callback: function(value, index, values) {
+                                return value.toLocaleString() + ' đ';
+                            }
+                        }
+                    }]
+                },
+                tooltips: {
+                    callbacks: {
+                        label: function(tooltipItem, data) {
+                            return tooltipItem.yLabel.toLocaleString() + ' đ';
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+}

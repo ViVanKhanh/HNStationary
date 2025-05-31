@@ -1,0 +1,48 @@
+﻿@model IEnumerable<HNStationaryStore.Models.EF.ProductCategory>
+
+<link href="~/Content/assets/styles/MenuLeft.css" rel="stylesheet" />
+
+@if (Model != null && Model.Any())
+{
+    <ul class="">
+        <li class="language1">
+            <ul class="language_selection1">
+                @foreach (var category in Model)
+                {
+                    <li class="has-submenu1">
+                        <a class="category-toggle">@category.CategoryName</a>
+                        @if (category.SubCategories != null && category.SubCategories.Any())
+                        {
+                            <ul class="submenu1">
+                                @foreach (var sub in category.SubCategories)
+                                {
+                                    <a href="@Url.Action("ProductBySubCategory", "Product", new { id = sub.SubCategoryID })">
+                                        @sub.SubCategoryName
+                                    </a>
+                                }
+                            </ul>
+                        }
+                    </li>
+                }
+            </ul>
+        </li>
+    </ul>
+}
+
+<!-- Đảm bảo đã load jQuery trước khi sử dụng -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('.category-toggle').click(function (e) {
+            e.preventDefault();
+
+            // Đóng tất cả các submenu khác trước khi mở cái này
+            $('.submenu1').not($(this).next('.submenu1')).slideUp();
+            $('.has-submenu1').not($(this).parent()).removeClass('open');
+
+            // Toggle submenu hiện tại
+            $(this).next('.submenu1').slideToggle();
+            $(this).parent().toggleClass('open');
+        });
+    });
+</script>

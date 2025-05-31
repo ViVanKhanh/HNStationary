@@ -1,0 +1,123 @@
+﻿<ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+
+    <!-- Sidebar - Brand -->
+    <a class="sidebar-brand d-flex align-items-center justify-content-center" href="/Admin/home">
+        <div class="sidebar-brand-icon rotate-n-15">
+        </div>
+        <div class="sidebar-brand-text mx-3">HNStationary</div>
+    </a>
+
+    <!-- Divider -->
+    <hr class="sidebar-divider my-0">
+
+    <!-- Nav Item - Dashboard -->
+    <li class="nav-item">
+        <a class="nav-link" href="/Admin/Category">
+            <i class="fas fa-fw fa-tachometer-alt"></i>
+            <span>DANH MỤC</span>
+        </a>
+    </li>
+
+    <li class="nav-item">
+        <a class="nav-link" href="/Admin/role/index">
+            <i class="fas fa-fw fa-cog"></i>
+            <span>QUYỀN</span>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="/Admin/News">
+            <i class="fas fa-fw fa-newspaper"></i>
+            <span>TIN TỨC, BÀI VIẾT</span>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="/Admin/Order">
+            <i class="fas fa-fw fa-shopping-cart"></i>
+            <span>ĐƠN HÀNG</span>
+        </a>
+    </li>
+
+    <li class="nav-item">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
+           aria-expanded="true" aria-controls="collapseTwo">
+            <i class="fas fa-fw fa-box"></i>
+            <span>QUẢN LÝ SẢN PHẨM</span>
+        </a>
+        <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <a class="collapse-item" href="/Admin/ProductCategory">Danh mục sản phẩm</a>
+                <a class="collapse-item" href="/Admin/SubCategory">Danh mục con</a>
+                <a class="collapse-item" href="/Admin/Products">Sản phẩm</a>
+            </div>
+        </div>
+    </li>
+
+    <li class="nav-item">
+        <a class="nav-link" href="/Admin/Statistical">
+            <i class="fas fa-fw fa-chart-area"></i>
+            <span>BÁO CÁO DOANH THU</span>
+        </a>
+    </li>
+
+    @*<li class="nav-item">
+        <a class="nav-link" href="/Admin/Settings">
+            <i class="fas fa-fw fa-tools"></i>
+            <span>CẤU HÌNH HỆ THỐNG</span>
+        </a>
+    </li>*@
+
+    <li class="nav-item">
+        <a class="nav-link" href="/Admin/account/index">
+            <i class="fas fa-fw fa-user"></i>
+            <span>TÀI KHOẢN</span>
+        </a>
+    </li>
+
+    <li class="nav-item">
+        <a class="nav-link logout-link" href="javascript:document.getElementById('logOffForm').submit()">
+            <i class="fas fa-fw fa-sign-out-alt"></i>
+            <span>ĐĂNG XUẤT</span>
+        </a>
+    </li>
+
+    <hr class="sidebar-divider d-none d-md-block">
+
+    <!-- Sidebar Toggler -->
+    <div class="text-center d-none d-md-inline">
+        <button class="rounded-circle border-0" id="sidebarToggle"></button>
+    </div>
+
+</ul>
+
+<!-- CSS để thêm hiệu ứng hover -->
+<style>
+    .nav-item {
+        transition: background-color 0.3s ease-in-out;
+    }
+
+        .nav-item:hover {
+            background-color: rgba(255, 255, 255, 0.2); /* Màu nền hover */
+            border-radius: 5px;
+        }
+
+    .logout-link {
+        
+        border-radius: 5px;
+        transition: background-color 0.3s;
+    }
+
+        .logout-link:hover {
+            background-color: #c82333; /* Màu tối hơn khi hover */
+        }
+</style>
+
+
+@if (Request.IsAuthenticated)
+{
+    <div style="display: none">
+        @using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { @id = "logOffForm" }))
+        {
+        @Html.AntiForgeryToken()
+        }
+    </div>
+}

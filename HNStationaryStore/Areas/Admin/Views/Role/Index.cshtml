@@ -1,0 +1,72 @@
+﻿@using Microsoft.AspNet.Identity.EntityFramework
+@model IEnumerable<IdentityRole>
+@{
+    ViewBag.Title = "Phân quyền";
+}
+
+
+<div class="container-fluid">
+    <div class="row mb-2">
+        <div class="col-sm-6">
+            <h3 style="color: #222; font-weight: 700;">Quản lý @ViewBag.Title</h3>
+        </div>
+        <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+                <li class="breadcrumb-item"><a href="/admin/home">Home</a></li>
+                <li class="breadcrumb-item active">@ViewBag.Title</li>
+            </ol>
+        </div>
+    </div>
+
+    <section class="content">
+
+        <!-- Default box -->
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0" style="color: #222; font-weight: 700;">@ViewBag.Title</h5>
+                <div class="card-tools">
+                    <a href="/admin/role/create" class="btn btn-primary">Thêm mới</a>
+                    <a href="#" class="btn btn-danger " id="btnDeleteAll">Xóa</a>
+                </div>
+            </div>
+            <div class="card-body">
+               
+                <table class="table table-bordered text-center table-hover">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Tên</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model != null)
+                        {
+                            var i = 1;
+                            foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>@i</td>
+                                    <td>@item.Name</td>
+                                    <td>
+                                        <a href="@Url.Action("Edit", "Role", new { id = item.Id })" class="btn btn-sm btn-warning">Sửa</a>
+                                    </td>
+                                </tr>
+                                i++;
+                            }
+                        }
+
+                    </tbody>
+                </table>
+                @*@Html.PagedListPager(Model, page => Url.Action("Index", new { page }))*@
+            </div>
+            <!-- /.card-body -->
+            <div class="card-footer">
+
+            </div>
+            <!-- /.card-footer-->
+        </div>
+        <!-- /.card -->
+
+    </section>
+</div><!-- /.container-fluid -->

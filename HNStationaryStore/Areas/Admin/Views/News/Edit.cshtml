@@ -1,0 +1,118 @@
+﻿@model HNStationaryStore.Models.EF.News
+@{
+    ViewBag.Title = "Cập nhật tin tức";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="row mb-2">
+    <div class="col-sm-6">
+        <h3 class="fw-bold text-dark">Thêm mới danh mục</h3>
+    </div>
+    <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href="/admin/home">Home</a></li>
+            <li class="breadcrumb-item"><a href="/admin/news">Tin tức</a></li>
+            <li class="breadcrumb-item active">Cập nhật</li>
+        </ol>
+    </div>
+</div>
+
+<section class="content">
+
+    <!-- Default box -->
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="card-title fw-bold text-dark mb-0">Thông tin cập nhật tin tức</h5>
+
+        </div>
+
+        <div class="card-body">
+            @if (Model != null)
+            {
+                <div class="card-body p-0">
+                    <div class="bs-stepper-content">
+                        @using (Html.BeginForm("Edit", "news", FormMethod.Post, new { }))
+                        {
+                            @Html.AntiForgeryToken()
+                            @Html.ValidationSummary(false)
+                            @Html.HiddenFor(x => x.NewsID)
+                            @Html.HiddenFor(x => x.CreateDate)
+                        <div id="logins-part" class="content" role="tabpanel" aria-labelledby="logins-part-trigger">
+                            <div class="form-group">
+                                <label for="exampleInputEmail1" style="color: #222; font-weight: 700;">Tiêu đề tin</label>
+                                @Html.TextBoxFor(x => x.Title, new { @class = "form-control", @placeholder = "Tiêu đề tin" })
+                                @Html.ValidationMessageFor(x => x.Title, null, new { @class = "text-danger" })
+                            </div>
+                            <div class="form-group">
+                                <label for="exampleInputEmail1" style="color: #222; font-weight: 700;">Mô tả tin</label>
+                                @Html.TextBoxFor(x => x.Description, new { @class = "form-control", @placeholder = "Mô tả" })
+                                @Html.ValidationMessageFor(x => x.Description, null, new { @class = "text-danger" })
+                            </div>
+                            <div class="form-group">
+                                <label for="exampleInputEmail1" style="color: #222; font-weight: 700;">Trạng thái</label>
+                                @Html.CheckBoxFor(x => x.IsActived)
+                            </div>
+                            <div class="form-group">
+                                <label for="exampleInputPassword1" style="color: #222; font-weight: 700;">Chi tiết</label>
+                                @Html.TextAreaFor(x => x.Content, new { @class = "form-control", @id = "txtDetail" })
+                                @Html.ValidationMessageFor(x => x.Content, null, new { @class = "text-danger" })
+                            </div>
+                            <div class="form-group">
+                                <label for="exapleInputFile">Hình ảnh</label>
+                                <div class="input-group">
+                                    <div class="custom-file">
+                                        @Html.TextBoxFor(x => x.Image, new { @id = "txtImage", @class = "form-control" })
+                                    </div>
+                                    <div class="input-group-append">
+                                        <input type="button" value="tải ảnh" onclick="BrowseServer('txtImage')" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                            <div id="information-part" class="content" role="tabpanel" aria-labelledby="information-part-trigger">
+
+                                <a href="/admin/news" class="btn btn-danger">Quay lại</a>
+                                <button type="submit" class="btn btn-primary">Lưu</button>
+                            </div>
+                        }
+
+                    </div>
+                </div>
+            }
+
+        </div>
+        <!-- /.card-body -->
+        <div class="card-footer">
+
+        </div>
+        <!-- /.card-footer-->
+    </div>
+    <!-- /.card -->
+
+</section>
+@section scripts{
+
+    <script>
+        CKEDITOR.replace('txtDetail', {
+            customConfig: '/content/ckeditor/config.js',
+            extraAllowedContent: 'span',
+            autoUpdateElement: true // Tự động cập nhật giá trị vào textarea khi submit
+        });
+
+        function BrowseServer(field) {
+            var finder = new CKFinder();
+            finder.selectActionFunction = function (fileUrl) {
+                document.getElementById(field).value = fileUrl;
+            };
+            finder.popup();
+        }
+        // Cập nhật giá trị CKEditor trước khi submit
+        $('form').submit(function () {
+            for (var instance in CKEDITOR.instances) {
+                CKEDITOR.instances[instance].updateElement();
+            }
+            return true;
+        });
+    </script>
+}

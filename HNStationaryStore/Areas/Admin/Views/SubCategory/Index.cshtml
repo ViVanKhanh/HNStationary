@@ -1,0 +1,126 @@
+﻿@model IPagedList<HNStationaryStore.Models.EF.SubCategory>
+@using PagedList.Mvc;
+@using PagedList;
+
+@{
+    ViewBag.Title = "Danh mục sản phẩm";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="row mb-2">
+        <div class="col-sm-6">
+            <h3 style="color: #222; font-weight: 700;">Quản lý danh mục con</h3>
+        </div>
+        <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+                <li class="breadcrumb-item"><a href="/admin/home">Home</a></li>
+                <li class="breadcrumb-item active">Danh mục con</li>
+            </ol>
+        </div>
+    </div>
+
+    <section class="content">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0" style="color: #222; font-weight: 700;">Danh mục con</h5>
+                <div class="card-tools">
+                    <a href="/admin/SubCategory/add" class="btn btn-primary">Thêm mới</a>
+                </div>
+            </div>
+            <div class="card-body">
+                <!-- Thêm ô tìm kiếm -->
+                @using (Html.BeginForm("Index", "SubCategory", FormMethod.Get, new { @class = "form-inline mb-3" }))
+                {
+                    <div class="input-group">
+                        @Html.TextBox("SearchText", ViewBag.CurrentFilter as string, new { @class = "form-control", placeholder = "Tìm kiếm..." })
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-secondary" type="submit">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                }
+
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>STT</th>
+                            <th>Tên danh mục con</th>
+                            <th>Mã danh mục</th>
+                            <th>Tên danh mục</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model != null && Model.Any())
+                        {
+                            var i = (Model.PageNumber - 1) * Model.PageSize + 1;
+                            foreach (var item in Model)
+                            {
+                                <tr id="trow_@item.SubCategoryID">
+                                    <td>@i</td>
+                                    <td>@item.SubCategoryName</td>
+                                    <td>@item.CategoryID</td>
+                                    <td>@item.ProductCategory.CategoryName</td>
+                                    <td>
+                                        <a href="/admin/SubCategory/edit/@item.SubCategoryID" class="btn btn-sm btn-primary">Sửa</a>
+                                        <a href="#" data-id="@item.SubCategoryID" class="btn btn-sm btn-danger btnDelete">Xóa</a>
+                                    </td>
+                                </tr>
+                                i++;
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="5" class="text-center">Không có bản ghi nào</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
+                <!-- Phân trang đơn giản -->
+                <div class="text-center">
+                    @Html.PagedListPager(Model, page => Url.Action("Index", new { page, SearchText = ViewBag.CurrentFilter }),
+                    new PagedListRenderOptions
+                    {
+                        Display = PagedListDisplayMode.IfNeeded,
+                        MaximumPageNumbersToDisplay = 10,
+                        UlElementClasses = new[] { "pagination" },
+                        LiElementClasses = new[] { "page-item" }
+                    })
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            $('body').on('click', '.btnDelete', function () {
+                var id = $(this).data("id");
+                var conf = confirm("Bạn có muốn xóa bản ghi này không?");
+                if (conf === true) {
+                    $.ajax({
+                        url: '/admin/SubCategory/delete',
+                        type: 'POST',
+                        data: { id: id },
+                        success: function (rs) {
+                            if (rs.success) {
+                                $('#trow_' + id).remove();
+                                // Nếu xóa item cuối cùng trên trang thì load lại trang trước
+                                if ($('tbody tr').length === 1 && @Model.PageNumber > 1) {
+                                    window.location.href = '@Url.Action("Index")' + '?page=' + (@Model.PageNumber - 1);
+                                } else {
+                                    window.location.reload();
+                                }
+                            }
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+}

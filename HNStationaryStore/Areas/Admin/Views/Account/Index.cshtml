@@ -1,0 +1,88 @@
+﻿@model PagedList.IPagedList<HNStationaryStore.Models.CreateAccountViewModel>
+@using PagedList.Mvc;
+@{
+    ViewBag.Title = "Tài khoản";
+}
+
+
+<div class="container-fluid">
+    <div class="row mb-2">
+        <div class="col-sm-6">
+            <h3 style="color: #222; font-weight: 700;">Quản lý @ViewBag.Title</h3>
+        </div>
+        <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+                <li class="breadcrumb-item"><a href="/admin/home">Home</a></li>
+                <li class="breadcrumb-item active">@ViewBag.Title</li>
+            </ol>
+        </div>
+    </div>
+
+    <section class="content">
+
+        <!-- Default box -->
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0" style="color: #222; font-weight: 700;">Danh sách @ViewBag.Title</h5>
+                <div class="card-tools">
+                    <a href="/admin/account/create" class="btn btn-primary">Thêm mới</a>
+                </div>
+            </div>
+            <div class="card-body">
+                <!-- Your existing table code -->
+
+                <table class="table table-bordered text-center table-hover">
+                    <!-- Your existing table headers -->
+                    <thead class="text-dark">
+                        <tr>
+                            <th>STT</th>
+                            <th>Tên tài khoản</th>
+                            <th>Họ tên</th>
+                            <th>Số điện thoại</th>
+                            <th>Địa chỉ</th>
+                            <th>Email</th>
+                            <th>Quyền</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model != null && Model.Any())
+                        {
+
+                            var i = (Model.PageNumber - 1) * Model.PageSize + 1;
+
+
+                            foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>@i</td>
+                                    <td>@item.UserName</td>
+                                    <td>@item.FullName</td>
+                                    <td>@item.Phone</td>
+                                    <td>@item.Address</td>
+                                    <td>@item.Email</td>
+                                    <td>@item.Role</td>
+                                    <td>
+                                        <a href="admin/account/edit/@item.UserName" class="btn btn-sm btn-warning">Sửa</a>
+                                        <a href="#" data-id="@item.UserName" class="btn btn-sm btn-danger btnDelete">Vô hiệu hóa</a>
+                                    </td>
+                                </tr>
+                                i++;
+                            }
+                        }
+                    </tbody>
+                </table>
+
+                <!-- Add pagination -->
+                @Html.PagedListPager(Model, page => Url.Action("Index", new { page }), new PagedListRenderOptions { Display = PagedListDisplayMode.IfNeeded })
+            </div>
+            <!-- /.card-body -->
+            <div class="card-footer">
+
+            </div>
+            <!-- /.card-footer-->
+        </div>
+        <!-- /.card -->
+
+    </section>
+</div><!-- /.container-fluid -->

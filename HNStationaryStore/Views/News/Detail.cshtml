@@ -1,0 +1,33 @@
+﻿@model HNStationaryStore.Models.EF.News
+@{
+    ViewBag.Title = "Chi tiết tin tức";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link rel="stylesheet" type="text/css" href="~/Content/assets/styles/contact_styles.css">
+<link rel="stylesheet" type="text/css" href="~/Content/assets/styles/contact_responsive.css">
+<div class="container contact_container">
+
+    <!-- Breadcrumbs -->
+
+    <div class="breadcrumbs d-flex flex-row align-items-center">
+        <ul>
+            <li><a href="/">Trang chủ</a></li>
+            <li><a href="/tin-tuc">Tin tức</a></li>
+        </ul>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12 ">
+            <h3 class="text-danger text-bold">@Model.Title</h3>
+            <p class="mb-5">Đã đăng ngày @Model.CreateDate.ToString("dd/MM/yyyy")</p>
+            <div class="content">
+                @Html.Raw(Model.Content)
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script src="~/Content/assets/js/contact_custom.js"></script>
+}

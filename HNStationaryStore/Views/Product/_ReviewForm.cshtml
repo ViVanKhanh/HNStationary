@@ -1,0 +1,52 @@
+﻿@model HNStationaryStore.Models.EF.ProductReview
+
+<div class="box-section">
+    <h4 class="text-danger">Thêm đánh giá</h4>
+    @if (TempData["ReviewError"] != null)
+    {
+        <div class="alert alert-danger">@TempData["ReviewError"]</div>
+    }
+
+    @using (Html.BeginForm("AddReview", "Product", FormMethod.Post, new { @class = "review-form" }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(m => m.ProductID)
+
+        <div class="form-group">
+            <label for="ReviewerName">Tên của bạn *</label>
+            @Html.TextBoxFor(m => m.ReviewerName, new { @class = "form-control", required = "required" })
+            @Html.ValidationMessageFor(m => m.ReviewerName)
+        </div>
+
+        <div class="form-group">
+            <label for="ReviewerEmail">Email *</label>
+            @Html.TextBoxFor(m => m.ReviewerEmail, new { @class = "form-control", type = "email", required = "required" })
+            @Html.ValidationMessageFor(m => m.ReviewerEmail)
+        </div>
+
+        <div class="form-group">
+            <label>Đánh giá của bạn *</label>
+            <div class="star-rating">
+                @for (int i = 5; i >= 1; i--)
+                {
+                    <input id="star-@i" type="radio" name="Rating" value="@i" @(i == 5 ? "checked" : "") />
+                    <label for="star-@i" title="@i sao">
+                        <i class="fa fa-star" aria-hidden="true"></i>
+                    </label>
+                }
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="Comment">Nhận xét *</label>
+            @Html.TextAreaFor(m => m.Comment, new { @class = "form-control", rows = "4", required = "required" })
+            @Html.ValidationMessageFor(m => m.Comment)
+        </div>
+
+        <button type="submit" class="btn btn-primary">Gửi đánh giá</button>
+    }
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
