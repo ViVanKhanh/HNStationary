@@ -1319,9 +1319,8 @@ textarea:hover
 {
 	color: #fe4c50;
 }
-.footer_social
-{
-	height: 130px;
+.footer_social {
+	height: 50px;
 }
 .footer_social ul li
 {

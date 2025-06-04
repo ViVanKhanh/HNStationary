@@ -92,6 +92,24 @@ namespace HNStationaryStore.Models
         [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; }
     }
+    public class UserListViewModel
+    {
+        public string Id { get; set; }  // Trường Id để dùng link sửa/xóa
+
+        public string UserName { get; set; }
+
+        public string FullName { get; set; }
+
+        public string Phone { get; set; }
+
+        public string Address { get; set; }
+
+        public string Email { get; set; }
+
+        public string Role { get; set; }
+        public bool IsActive { get; set; }
+    }
+
     public class RegisterViewModel
     {
 

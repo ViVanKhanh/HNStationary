@@ -180,3 +180,4 @@ E:\nam4ki2\DATN\WebBanHang\HNStationaryStore\HNStationaryStore\obj\Debug\HNStati
 E:\nam4ki2\DATN\WebBanHang\HNStationaryStore\HNStationaryStore\obj\Debug\HNStationaryStore.Migrations.updateuserid.resources
 E:\nam4ki2\DATN\WebBanHang\HNStationaryStore\HNStationaryStore\obj\Debug\HNStationaryStore.Migrations.addreviews.resources
 E:\nam4ki2\DATN\WebBanHang\HNStationaryStore\HNStationaryStore\obj\Debug\HNStationaryStore.Migrations.addnhasx.resources
+E:\nam4ki2\DATN\WebBanHang\HNStationaryStore\HNStationaryStore\obj\Debug\HNStationaryStore.Migrations.addisactive.resources

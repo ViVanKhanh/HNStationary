@@ -12,20 +12,51 @@ namespace HNStationaryStore.Controllers
     {
         private ApplicationDbContext db = new ApplicationDbContext();
         // GET: Product
-        public ActionResult Index(int page = 1, int pageSize = 16)
+        public ActionResult Index(int page = 1, int pageSize = 16, int? priceRange = null)
         {
-            var items = db.Products.OrderBy(x => x.ProductID).ToList(); // hoặc sắp xếp theo điều kiện mong muốn
+            var items = db.Products.Where(p => p.IsActived).AsQueryable(); // lọc sản phẩm đang hoạt động
+
+            // Lọc theo khoảng giá
+            if (priceRange.HasValue)
+            {
+                switch (priceRange.Value)
+                {
+                    case 1:
+                        items = items.Where(p => p.SalePrice < 50000);
+                        break;
+                    case 2:
+                        items = items.Where(p => p.SalePrice >= 50000 && p.SalePrice <= 100000);
+                        break;
+                    case 3:
+                        items = items.Where(p => p.SalePrice > 100000 && p.SalePrice <= 200000);
+                        break;
+                    case 4:
+                        items = items.Where(p => p.SalePrice > 200000 && p.SalePrice <= 300000);
+                        break;
+                    case 5:
+                        items = items.Where(p => p.SalePrice > 300000 && p.SalePrice <= 500000);
+                        break;
+                    case 6:
+                        items = items.Where(p => p.SalePrice > 500000);
+                        break;
+                }
+            }
 
             int totalItems = items.Count();
             int totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
 
-            var pagedItems = items.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+            var pagedItems = items.OrderBy(x => x.ProductID)
+                                  .Skip((page - 1) * pageSize)
+                                  .Take(pageSize)
+                                  .ToList();
 
             ViewBag.CurrentPage = page;
             ViewBag.TotalPages = totalPages;
+            ViewBag.PriceRange = priceRange;
 
             return View(pagedItems);
         }
+
 
         public ActionResult Detail(int id)
         {
@@ -41,6 +72,8 @@ namespace HNStationaryStore.Controllers
             var items = db.Products.Where(x => x.IsHot).Take(12).ToList();
             return PartialView(items);
         }
+
+
         public ActionResult Partial_ItemSale()
         {
             DateTime now = DateTime.Now;
@@ -56,9 +89,9 @@ namespace HNStationaryStore.Controllers
             return PartialView(items);
         }
 
-        public ActionResult ProductBySubCategory(int id, int page = 1, int pageSize = 16)
+        public ActionResult ProductBySubCategory(int id, int page = 1, int pageSize = 16, int? priceRange = null)
         {
-            // Include các liên kết cần thiết
+            // Lấy subcategory và liên kết liên quan
             var subCategory = db.SubCategories
                                 .Include("Products.ProductImages")
                                 .Include("ProductCategory")
@@ -73,20 +106,48 @@ namespace HNStationaryStore.Controllers
             ViewBag.SubCategoryName = subCategory.SubCategoryName;
             ViewBag.SubCategoryID = id;
             ViewBag.PageSize = pageSize;
+            ViewBag.PriceRange = priceRange;
 
             // Lọc sản phẩm đã kích hoạt
             var filteredProducts = subCategory.Products
                                               .Where(p => p.IsActived)
-                                              .OrderByDescending(p => p.IsHot)
-                                              .ThenByDescending(p => p.CreatedAt)
-                                              .ToList();
+                                              .AsQueryable();
+
+            // Lọc theo khoảng giá nếu có
+            if (priceRange.HasValue)
+            {
+                switch (priceRange.Value)
+                {
+                    case 1:
+                        filteredProducts = filteredProducts.Where(p => p.SalePrice < 50000);
+                        break;
+                    case 2:
+                        filteredProducts = filteredProducts.Where(p => p.SalePrice >= 50000 && p.SalePrice <= 100000);
+                        break;
+                    case 3:
+                        filteredProducts = filteredProducts.Where(p => p.SalePrice > 100000 && p.SalePrice <= 200000);
+                        break;
+                    case 4:
+                        filteredProducts = filteredProducts.Where(p => p.SalePrice > 200000 && p.SalePrice <= 300000);
+                        break;
+                    case 5:
+                        filteredProducts = filteredProducts.Where(p => p.SalePrice > 300000 && p.SalePrice <= 500000);
+                        break;
+                    case 6:
+                        filteredProducts = filteredProducts.Where(p => p.SalePrice > 500000);
+                        break;
+                }
+            }
+
+            filteredProducts = filteredProducts.OrderByDescending(p => p.IsHot)
+                                               .ThenByDescending(p => p.CreatedAt);
 
             int totalItems = filteredProducts.Count();
             int totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
-            var pagedProducts = filteredProducts
-                                .Skip((page - 1) * pageSize)
-                                .Take(pageSize)
-                                .ToList();
+
+            var pagedProducts = filteredProducts.Skip((page - 1) * pageSize)
+                                                .Take(pageSize)
+                                                .ToList();
 
             ViewBag.CurrentPage = page;
             ViewBag.TotalPages = totalPages;
@@ -95,7 +156,8 @@ namespace HNStationaryStore.Controllers
         }
 
 
-        public ActionResult ProductByCategory(int id, int page = 1, int pageSize = 16)
+
+        public ActionResult ProductByCategory(int id, int page = 1, int pageSize = 16, int? priceRange = null)
         {
             var category = db.ProductCategories.FirstOrDefault(c => c.CategoryId == id);
             if (category == null)
@@ -103,24 +165,56 @@ namespace HNStationaryStore.Controllers
                 return HttpNotFound();
             }
 
-            var allProducts = db.Products
-                                .Include("ProductImages")
-                                .Where(p => p.ProductCategoryID == id && p.IsActived)
-                                .OrderByDescending(p => p.IsHot)
-                                .ThenByDescending(p => p.CreatedAt)
-                                .ToList();
-
-            int totalItems = allProducts.Count();
-            int totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
-            var pagedProducts = allProducts.Skip((page - 1) * pageSize).Take(pageSize).ToList();
-
             ViewBag.CategoryName = category.CategoryName;
-            ViewBag.CurrentPage = page;
-            ViewBag.TotalPages = totalPages;
             ViewBag.CategoryId = id;
+            ViewBag.CurrentPage = page;
+            ViewBag.PageSize = pageSize;
+            ViewBag.PriceRange = priceRange;
+
+            var filteredProducts = db.Products
+                                     .Include("ProductImages")
+                                     .Where(p => p.ProductCategoryID == id && p.IsActived)
+                                     .AsQueryable();
+
+            // Lọc theo khoảng giá nếu có
+            if (priceRange.HasValue)
+            {
+                switch (priceRange.Value)
+                {
+                    case 1:
+                        filteredProducts = filteredProducts.Where(p => p.SalePrice < 50000);
+                        break;
+                    case 2:
+                        filteredProducts = filteredProducts.Where(p => p.SalePrice >= 50000 && p.SalePrice <= 100000);
+                        break;
+                    case 3:
+                        filteredProducts = filteredProducts.Where(p => p.SalePrice > 100000 && p.SalePrice <= 200000);
+                        break;
+                    case 4:
+                        filteredProducts = filteredProducts.Where(p => p.SalePrice > 200000 && p.SalePrice <= 300000);
+                        break;
+                    case 5:
+                        filteredProducts = filteredProducts.Where(p => p.SalePrice > 300000 && p.SalePrice <= 500000);
+                        break;
+                    case 6:
+                        filteredProducts = filteredProducts.Where(p => p.SalePrice > 500000);
+                        break;
+                }
+            }
+
+            filteredProducts = filteredProducts
+                               .OrderByDescending(p => p.IsHot)
+                               .ThenByDescending(p => p.CreatedAt);
+
+            int totalItems = filteredProducts.Count();
+            int totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
+            var pagedProducts = filteredProducts.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+
+            ViewBag.TotalPages = totalPages;
 
             return View(pagedProducts);
         }
+
 
         public ActionResult _ProductReviews()
         {
@@ -183,6 +277,7 @@ namespace HNStationaryStore.Controllers
             return View("TimKiem", pagedKetQua);
         }
 
+        
 
     }
 }

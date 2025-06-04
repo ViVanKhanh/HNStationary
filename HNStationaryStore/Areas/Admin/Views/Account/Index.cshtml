@@ -1,4 +1,4 @@
-﻿@model PagedList.IPagedList<HNStationaryStore.Models.CreateAccountViewModel>
+﻿@model PagedList.IPagedList<HNStationaryStore.Models.UserListViewModel>
 @using PagedList.Mvc;
 @{
     ViewBag.Title = "Tài khoản";
@@ -63,8 +63,17 @@
                                     <td>@item.Email</td>
                                     <td>@item.Role</td>
                                     <td>
-                                        <a href="admin/account/edit/@item.UserName" class="btn btn-sm btn-warning">Sửa</a>
-                                        <a href="#" data-id="@item.UserName" class="btn btn-sm btn-danger btnDelete">Vô hiệu hóa</a>
+                                        <a href="/admin/account/edit/@item.Id" class="btn btn-sm btn-warning">Sửa</a>
+                                        <!-- Thay đổi trong file View -->
+                                        @if (item.IsActive)
+                                        {
+                                            <button data-id="@item.Id" class="btn btn-sm btn-success btnToggleStatus">Hoạt động</button>
+                                        }
+                                        else
+                                        {
+                                            <button data-id="@item.Id" class="btn btn-sm btn-danger btnToggleStatus">Vô hiệu hóa</button>
+                                        }
+
                                     </td>
                                 </tr>
                                 i++;
@@ -86,3 +95,32 @@
 
     </section>
 </div><!-- /.container-fluid -->
+
+@section Scripts {
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+    <script>
+    $(document).ready(function () {
+        $(".btnToggleStatus").click(function () {
+            var button = $(this);
+            var userId = button.data("id");
+
+            $.ajax({
+                url: '/admin/account/ToggleStatus',
+                type: 'POST',
+                data: { id: userId },
+                success: function (result) {
+                    if (result.isActive) {
+                        button.removeClass("btn-danger").addClass("btn-success").text("Hoạt động");
+                    } else {
+                        button.removeClass("btn-success").addClass("btn-danger").text("Vô hiệu hóa");
+                    }
+                },
+                error: function () {
+                    alert("Có lỗi xảy ra khi thay đổi trạng thái.");
+                }
+            });
+        });
+    });
+    </script>
+}

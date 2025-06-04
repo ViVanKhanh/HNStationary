@@ -1,0 +1,65 @@
+﻿@model IEnumerable<HNStationaryStore.Models.EF.Order>
+@{
+    ViewBag.Title = "Chi tiết đơn hàng tháng " + ViewBag.SelectedMonth + "/" + ViewBag.SelectedYear;
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid">
+    <a class="btn btn-success mb-3" href="@Url.Action("MonthlyReport", "Statistical", new { area = "Admin", year = ViewBag.SelectedYear })">
+        <i class="fas fa-arrow-left"></i> Quay lại
+    </a>
+    <h1 class="h3 mb-2 text-gray-800">@ViewBag.Title</h1>
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Danh sách đơn hàng</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Mã đơn</th>
+                            <th>Ngày đặt</th>
+                            <th>Khách hàng</th>
+                            <th>Tổng tiền</th>
+                            <th>Trạng thái</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var order in Model)
+                        {
+                            <tr>
+                                <td>@order.Code</td>
+                                <td>@order.CreatedAt.ToString("dd/MM/yyyy")</td>
+                                <td>@order.CustomerName</td>
+                                <td>@string.Format("{0:N0}", order.TotalPrice) đ</td>
+                                <td>
+                                    @{
+                                        string statusText = "";
+                                        switch (order.OrderStatus)
+                                        {
+                                            case HNStationaryStore.Models.EF.OrderStatus.Success:
+                                                statusText = "Đặt hàng thành công";
+                                                break;
+                                            case HNStationaryStore.Models.EF.OrderStatus.Shipping:
+                                                statusText = "Đang vận chuyển";
+                                                break;
+                                            case HNStationaryStore.Models.EF.OrderStatus.Delivered:
+                                                statusText = "Đã giao hàng";
+                                                break;
+                                            case HNStationaryStore.Models.EF.OrderStatus.Cancelled:
+                                                statusText = "Đã hủy";
+                                                break;
+                                        }
+                                    }
+                                    @statusText
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

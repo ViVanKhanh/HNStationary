@@ -34,7 +34,7 @@
                     <td>@item.ProductCategory</td>
                     <td>@item.Price.ToString("N0").Replace(",", ".") VND</td>
                     <td>
-                        <input type="number" class="form-control" id="Quantity_@item.ProductId" value="@item.Quantity" />
+                        <input type="number" class="form-control" id="Quantity_@item.ProductId" value="@item.Quantity" min="1" />
                     </td>
                     <td>@item.TotalPrice.ToString("N0").Replace(",", ".") VND</td>
                     <td>
@@ -82,7 +82,13 @@
         $('.btnUpdate').click(function (e) {
             e.preventDefault();
             var id = $(this).data("id");
-            var quantity = $('#Quantity_' + id).val();
+            var quantity = parseInt($('#Quantity_' + id).val());
+
+            if (quantity < 1) {
+                alert("Số lượng phải lớn hơn hoặc bằng 1");
+                $('#Quantity_' + id).val(1); // reset về 1
+                return;
+            }
 
             $.ajax({
                 url: '/ShoppingCard/Update',
@@ -99,5 +105,6 @@
                 }
             });
         });
+
     });
 </script>

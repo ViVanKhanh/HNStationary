@@ -15,8 +15,11 @@
             <div class="breadcrumbs d-flex flex-row align-items-center">
                 <ul>
                     <li><a href="/">Trang chủ</a></li>
-                    <li class="active"><a ><i class="fa fa-angle-right" aria-hidden="true"></i>Sản phẩm</a></li>
+                    <li class="active"><a><i class="fa fa-angle-right" aria-hidden="true"></i>Sản phẩm</a></li>
                 </ul>
+
+                
+
             </div>
 
             <!-- Sidebar -->
@@ -24,30 +27,76 @@
             <div class="sidebar">
                 <div class="sidebar_section">
                     <div class="sidebar_title">
-                        <h3 class="text-danger" >Danh mục sản phẩm</h3>
+                        <h3 class="text-danger">Danh mục sản phẩm</h3>
                     </div>
                     @Html.Action("MenuLeft", "Menu")
-                    
+
+                </div>
+                <div>
+                    <form method="get" action="@Url.Action("Index", "Product")">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="priceRange" value="1" @(ViewBag.PriceRange?.ToString() == "1" ? "checked" : "") />
+                            <label class="form-check-label">Dưới 50.000đ</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="priceRange" value="2" @(ViewBag.PriceRange?.ToString() == "2" ? "checked" : "") />
+                            <label class="form-check-label">50.000đ - 100.000đ</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="priceRange" value="3" @(ViewBag.PriceRange?.ToString() == "3" ? "checked" : "") />
+                            <label class="form-check-label">100.000đ - 200.000đ</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="priceRange" value="4" @(ViewBag.PriceRange?.ToString() == "4" ? "checked" : "") />
+                            <label class="form-check-label">200.000đ - 300.000đ</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="priceRange" value="5" @(ViewBag.PriceRange?.ToString() == "5" ? "checked" : "") />
+                            <label class="form-check-label">300.000đ - 500.000đ</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="priceRange" value="6" @(ViewBag.PriceRange?.ToString() == "6" ? "checked" : "") />
+                            <label class="form-check-label">Trên 500.000đ</label>
+                        </div>
+
+                        <button type="submit" class="btn btn-danger mt-2">Lọc</button>
+                        <a href="@Url.Action("Index", "Product", new {  })"
+                           class="btn btn-danger mt-2">Tất cả sản phẩm</a>
+                    </form>
                 </div>
 
-                 @*Phạm vi giá
-                <div class="sidebar_section">
-                    <div class="sidebar_title">
-                        <h5>Lọc theo giá</h5>
-                    </div>
-                    <p>
-                        <input type="text" id="amount" readonly style="border:0; color:#f6931f; font-weight:bold;">
-                    </p>
-                    <div id="slider-range"></div>
-                    <div class="filter_button"><span>Lọc</span></div>
-                </div>*@
+
+                @*Phạm vi giá
+        <div class="sidebar_section">
+            <div class="sidebar_title">
+                <h5>Lọc theo giá</h5>
+            </div>
+            <p>
+                <input type="text" id="amount" readonly style="border:0; color:#f6931f; font-weight:bold;">
+            </p>
+            <div id="slider-range"></div>
+            <div class="filter_button"><span>Lọc</span></div>
+        </div>*@
 
             </div>
 
             <!-- Main Content -->
 
             <div class="main_content">
-
+                <!-- Product Sorting -->
+                <div class="product_sorting_container product_sorting_container_top">
+                    <ul class="product_sorting">
+                        <li>
+                            <span class="type_sorting_text">Sắp xếp</span>
+                            <i class="fa fa-angle-down"></i>
+                            <ul class="sorting_type">
+                                <li class="type_sorting_btn" data-isotope-option='{ "sortBy": "original-order" }'><span>Mặc định</span></li>
+                                <li class="type_sorting_btn" data-isotope-option='{ "sortBy": "price" }'><span>Giá</span></li>
+                                <li class="type_sorting_btn" data-isotope-option='{ "sortBy": "name" }'><span>Tên sản phẩm</span></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
                 <!-- Products -->
 
                 <div class="products_iso">
@@ -55,34 +104,33 @@
                         <div class="col">
 
                             <!-- Product Sorting -->
-
                             @*<div class="product_sorting_container product_sorting_container_top">
-                                <ul class="product_sorting">
-                                    <li>
-                                        <span class="type_sorting_text">Default Sorting</span>
-                                        <i class="fa fa-angle-down"></i>
-                                        <ul class="sorting_type">
-                                            <li class="type_sorting_btn" data-isotope-option='{ "sortBy": "original-order" }'><span>Default Sorting</span></li>
-                                            <li class="type_sorting_btn" data-isotope-option='{ "sortBy": "price" }'><span>Price</span></li>
-                                            <li class="type_sorting_btn" data-isotope-option='{ "sortBy": "name" }'><span>Product Name</span></li>
-                                        </ul>
-                                    </li>
-                                    
+                        <ul class="product_sorting">
+                            <li>
+                                <span class="type_sorting_text">Default Sorting</span>
+                                <i class="fa fa-angle-down"></i>
+                                <ul class="sorting_type">
+                                    <li class="type_sorting_btn" data-isotope-option='{ "sortBy": "original-order" }'><span>Default Sorting</span></li>
+                                    <li class="type_sorting_btn" data-isotope-option='{ "sortBy": "price" }'><span>Price</span></li>
+                                    <li class="type_sorting_btn" data-isotope-option='{ "sortBy": "name" }'><span>Product Name</span></li>
                                 </ul>
-                                <div class="pages d-flex flex-row align-items-center">
-                                    <div class="page_current">
-                                        <span>1</span>
-                                        <ul class="page_selection">
-                                            <li><a href="#">1</a></li>
-                                            <li><a href="#">2</a></li>
-                                            <li><a href="#">3</a></li>
-                                        </ul>
-                                    </div>
-                                    <div class="page_total"><span>of</span> 3</div>
-                                    <div id="next_page" class="page_next"><a href="#"><i class="fa fa-long-arrow-right" aria-hidden="true"></i></a></div>
-                                </div>
+                            </li>
 
-                            </div>*@
+                        </ul>
+                        <div class="pages d-flex flex-row align-items-center">
+                            <div class="page_current">
+                                <span>1</span>
+                                <ul class="page_selection">
+                                    <li><a href="#">1</a></li>
+                                    <li><a href="#">2</a></li>
+                                    <li><a href="#">3</a></li>
+                                </ul>
+                            </div>
+                            <div class="page_total"><span>of</span> 3</div>
+                            <div id="next_page" class="page_next"><a href="#"><i class="fa fa-long-arrow-right" aria-hidden="true"></i></a></div>
+                        </div>
+
+                    </div>*@
 
                             <!-- Product Grid -->
 

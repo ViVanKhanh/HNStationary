@@ -1,0 +1,102 @@
+﻿@model IEnumerable<HNStationaryStore.Models.EF.Order>
+@{
+    ViewBag.Title = "Chi tiết đơn hàng ngày " + ViewBag.ReportDate;
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid">
+    <a class="btn btn-primary mb-3" href="javascript:history.back()">Quay lại</a>
+    <h1 class="h3 mb-2 text-gray-800">Chi tiết đơn hàng ngày @ViewBag.ReportDate</h1>
+
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                        Tổng số đơn
+                    </div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800">
+                        @ViewBag.OrderCount
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                        Tổng doanh thu
+                    </div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800">
+                        @string.Format("{0:N0}", ViewBag.TotalRevenue) đ
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow mb-4">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Mã đơn</th>
+                            <th>Thời gian</th>
+                            <th>Khách hàng</th>
+                            <th>Số sản phẩm</th>
+                            <th>Tổng tiền</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var order in Model)
+                        {
+                            <tr>
+                                <td>@order.Code</td>
+                                <td>@order.CreatedAt.ToString("HH:mm dd/MM/yyyy")</td>
+                                <td>@order.CustomerName</td>
+                                <td>@order.OrderDetails.Sum(od => od.Quantity)</td>
+                                <td>@string.Format("{0:N0}", order.TotalPrice) đ</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <nav aria-label="Page navigation">
+                <ul class="pagination">
+                    @if (ViewBag.Page > 1)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" href="@Url.Action("DailyOrders", new { date = Model.First().CreatedAt.ToString("yyyy-MM-dd"), page = ViewBag.Page - 1, pageSize = ViewBag.PageSize })">
+                                Trước
+                            </a>
+                        </li>
+                    }
+
+                    @for (int i = 1; i <= ViewBag.TotalPages; i++)
+                    {
+                        <li class="page-item @(i == ViewBag.Page ? "active" : "")">
+                            <a class="page-link" href="@Url.Action("DailyOrders", new { date = Model.First().CreatedAt.ToString("yyyy-MM-dd"), page = i, pageSize = ViewBag.PageSize })">
+                                @i
+                            </a>
+                        </li>
+                    }
+
+                    @if (ViewBag.Page < ViewBag.TotalPages)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" href="@Url.Action("DailyOrders", new { date = Model.First().CreatedAt.ToString("yyyy-MM-dd"), page = ViewBag.Page + 1, pageSize = ViewBag.PageSize })">
+                                Sau
+                            </a>
+                        </li>
+                    }
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+<!-- Cuối trang DailyOrders.cshtml -->

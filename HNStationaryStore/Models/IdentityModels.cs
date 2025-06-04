@@ -26,6 +26,7 @@ namespace HNStationaryStore.Models
         public string Address { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public bool IsActive { get; set; } = true;
 
         public virtual ICollection<Cart> Carts { get; set; }
         public virtual ICollection<Order> Orders { get; set; }

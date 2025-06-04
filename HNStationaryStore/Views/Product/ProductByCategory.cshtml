@@ -27,18 +27,48 @@
                     </div>
                     @Html.Action("MenuLeft", "Menu")
                 </div>
+                <form method="get" action="@Url.Action("ProductByCategory", "Product")">
+                    <input type="hidden" name="id" value="@ViewBag.CategoryId" />
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="priceRange" value="1" @(ViewBag.PriceRange?.ToString() == "1" ? "checked" : "") />
+                        <label class="form-check-label">Dưới 50.000đ</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="priceRange" value="2" @(ViewBag.PriceRange?.ToString() == "2" ? "checked" : "") />
+                        <label class="form-check-label">50.000đ - 100.000đ</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="priceRange" value="3" @(ViewBag.PriceRange?.ToString() == "3" ? "checked" : "") />
+                        <label class="form-check-label">100.000đ - 200.000đ</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="priceRange" value="4" @(ViewBag.PriceRange?.ToString() == "4" ? "checked" : "") />
+                        <label class="form-check-label">200.000đ - 300.000đ</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="priceRange" value="5" @(ViewBag.PriceRange?.ToString() == "5" ? "checked" : "") />
+                        <label class="form-check-label">300.000đ - 500.000đ</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="priceRange" value="6" @(ViewBag.PriceRange?.ToString() == "6" ? "checked" : "") />
+                        <label class="form-check-label">Trên 500.000đ</label>
+                    </div>
+                    <button type="submit" class="btn btn-danger mt-2">Lọc</button>
+                    <a href="@Url.Action("ProductByCategory", "Product", new { id = ViewBag.CategoryID })"
+   class="btn btn-danger mt-2">Tất cả sản phẩm</a>
+                </form>
 
                 <!-- Price Range Filtering -->
                 @*<div class="sidebar_section">
-                    <div class="sidebar_title">
-                        <h5>Lọc theo giá</h5>
-                    </div>
-                    <p>
-                        <input type="text" id="amount" readonly style="border:0; color:#f6931f; font-weight:bold;">
-                    </p>
-                    <div id="slider-range"></div>
-                    <div class="filter_button"><span>lọc</span></div>
-                </div>*@
+            <div class="sidebar_title">
+                <h5>Lọc theo giá</h5>
+            </div>
+            <p>
+                <input type="text" id="amount" readonly style="border:0; color:#f6931f; font-weight:bold;">
+            </p>
+            <div id="slider-range"></div>
+            <div class="filter_button"><span>lọc</span></div>
+        </div>*@
             </div>
 
             <!-- Main Content -->

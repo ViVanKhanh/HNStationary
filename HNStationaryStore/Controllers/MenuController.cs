@@ -1,4 +1,5 @@
 ﻿using HNStationaryStore.Models;
+using HNStationaryStore.Models.EF;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -35,5 +36,7 @@ namespace HNStationaryStore.Controllers
             var items = db.ProductCategories.Take(4).ToList();
             return PartialView("DanhMucSanPham", items);
         }
+        
+
     }
 }

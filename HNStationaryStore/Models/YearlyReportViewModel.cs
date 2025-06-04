@@ -10,5 +10,7 @@ namespace HNStationaryStore.Models
         public int Year { get; set; }
         public decimal TotalRevenue { get; set; }
         public int OrderCount { get; set; }
+
+        public decimal Profit { get; set; }
     }
 }

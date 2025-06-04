@@ -74,8 +74,19 @@ namespace HNStationaryStore.Controllers
                 return View(model);
             }
 
-            // This doesn't count login failures towards account lockout
-            // To enable password failures to trigger account lockout, change to shouldLockout: true
+            var user = await UserManager.FindByNameAsync(model.UserName);
+            if (user == null)
+            {
+                ModelState.AddModelError("", "Tài khoản không tồn tại.");
+                return View(model);
+            }
+
+            if (!user.IsActive) // nếu tài khoản đã bị vô hiệu hóa
+            {
+                ModelState.AddModelError("", "Tài khoản đã bị vô hiệu hóa.");
+                return View(model);
+            }
+
             var result = await SignInManager.PasswordSignInAsync(model.UserName, model.Password, model.RememberMe, shouldLockout: false);
             switch (result)
             {
@@ -87,10 +98,11 @@ namespace HNStationaryStore.Controllers
                     return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = model.RememberMe });
                 case SignInStatus.Failure:
                 default:
-                    ModelState.AddModelError("", "Invalid login attempt.");
+                    ModelState.AddModelError("", "Đăng nhập không hợp lệ.");
                     return View(model);
             }
         }
+
 
         //
         // GET: /Account/VerifyCode

@@ -370,12 +370,17 @@
     <Compile Include="Migrations\202505200553193_addnhasx.designer.cs">
       <DependentUpon>202505200553193_addnhasx.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202506021344580_addisactive.cs" />
+    <Compile Include="Migrations\202506021344580_addisactive.designer.cs">
+      <DependentUpon>202506021344580_addisactive.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Commons\Filter.cs" />
     <Compile Include="Models\CustomerViewModel.cs" />
     <Compile Include="Models\CustomDateReportViewModel.cs" />
     <Compile Include="Models\EditAccountRoleViewModel.cs" />
+    <Compile Include="Models\EditUserViewModel.cs" />
     <Compile Include="Models\EF\Cart.cs" />
     <Compile Include="Models\EF\CartItem.cs" />
     <Compile Include="Models\EF\Category.cs" />
@@ -454,12 +459,13 @@
     <Content Include="Content\assets\dist\js\pages\dashboard.js" />
     <Content Include="Content\assets\dist\js\pages\dashboard2.js" />
     <Content Include="Content\assets\dist\js\pages\dashboard3.js" />
+    <Content Include="Content\assets\images\anhbaner.png" />
     <Content Include="Content\assets\images\banner_1.jpg" />
     <Content Include="Content\assets\images\banner_2.jpg" />
     <Content Include="Content\assets\images\banner_3.jpg" />
+    <Content Include="Content\assets\images\banner_4.jpg" />
     <Content Include="Content\assets\images\blog_1.jpg" />
     <Content Include="Content\assets\images\blog_2.jpg" />
-    <Content Include="Content\assets\images\blog_3.jpg" />
     <Content Include="Content\assets\images\deal_ofthe_week.png" />
     <Content Include="Content\assets\images\deli-banner-2.jpg" />
     <Content Include="Content\assets\images\desc_1.jpg" />
@@ -483,6 +489,7 @@
     <Content Include="Content\assets\images\single_3.jpg" />
     <Content Include="Content\assets\images\single_3_thumb.jpg" />
     <Content Include="Content\assets\images\slider_1.jpg" />
+    <Content Include="Content\assets\images\uuuu.png" />
     <Content Include="Content\assets\images\van-phong-pham-247.jpg" />
     <Content Include="Content\assets\images\vpp.jpeg" />
     <Content Include="Content\assets\js\categories_custom.js" />
@@ -3396,6 +3403,10 @@
     <Content Include="Areas\Admin\Views\Statistical\YearlyReport.cshtml" />
     <Content Include="Areas\Admin\Views\Statistical\MonthlyReport.cshtml" />
     <Content Include="Areas\Admin\Views\Statistical\CustomDateReport.cshtml" />
+    <Content Include="Areas\Admin\Views\Account\Edit.cshtml" />
+    <Content Include="Areas\Admin\Views\Statistical\MonthlyOrders.cshtml" />
+    <Content Include="Areas\Admin\Views\Statistical\DailyOrders.cshtml" />
+    <Content Include="Content\assets\images\slider_7.webp" />
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.4.1.js" />
     <Content Include="Scripts\jquery-3.4.1.min.js" />
@@ -3585,6 +3596,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202505200553193_addnhasx.resx">
       <DependentUpon>202505200553193_addnhasx.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202506021344580_addisactive.resx">
+      <DependentUpon>202506021344580_addisactive.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

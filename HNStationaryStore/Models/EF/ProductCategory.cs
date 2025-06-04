@@ -17,5 +17,6 @@ namespace HNStationaryStore.Models.EF
         public string CategoryName { get; set; }
 
         public virtual ICollection<SubCategory> SubCategories { get; set; }
+        public virtual ICollection<Product> Products { get; set; }
     }
 }
